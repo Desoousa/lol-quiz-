@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>League of Legends - Pruebas del Invocador</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Fondo: Imágenes reales de League of Legends (Splash Arts) -->
+    <div class="bg-layer" id="bgLayer">
+        <!-- Carrusel de 10 splash arts oficiales de LoL -->
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <div class="bg-image" aria-hidden="true"></div>
+        <!-- Overlay encima de las imágenes -->
+        <div class="bg-overlay"></div>
+    </div>
+
+    <!-- Siluetas de campeones aleatorias (estilo champ select) -->
+    <div class="champion-silhouettes" id="champSilhouettes" aria-hidden="true"></div>
+
+    <!-- Partículas de esencia -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Overlay degradado extra para legibilidad -->
+    <div class="overlay"></div>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <!-- Logo / Título -->
+        <header class="header">
+            <div class="logo-container">
+                <svg class="logo" viewBox="0 0 200 200" aria-hidden="true">
+                    <circle cx="100" cy="100" r="95" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <path d="M100 30 L100 170 M30 100 L170 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M60 60 L140 140 M140 60 L60 140" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+                </svg>
+            </div>
+            <h1 class="title">PRUEBAS DEL INVOCADOR</h1>
+            <p class="subtitle">Demuestra tu conocimiento... o tu locura</p>
+        </header>
+
+        <!-- Botones principales -->
+        <section class="buttons-container">
+            <!-- Botón JUGAR - Estética seria -->
+            <button class="btn btn-serious" id="btnJugar" aria-label="Iniciar modo serio">
+                <span class="btn-glow"></span>
+                <span class="btn-icon serious-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </span>
+                <span class="btn-text">
+                    <span class="btn-label">JUGAR</span>
+                    <span class="btn-desc">Modo Invocador</span>
+                </span>
+                <span class="btn-border"></span>
+            </button>
+
+            <!-- Botón ADVERTENCIA - Estética troll/peligrosa -->
+            <button class="btn btn-warning" id="btnAdvertencia" aria-label="Iniciar modo advertencia">
+                <span class="btn-glitch" aria-hidden="true"></span>
+                <span class="btn-icon warning-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                    </svg>
+                </span>
+                <span class="btn-text">
+                    <span class="btn-label">ADVERTENCIA</span>
+                    <span class="btn-desc">Entrar bajo tu responsabilidad</span>
+                </span>
+                <span class="btn-border"></span>
+            </button>
+        </section>
+
+        <!-- Texto de pie sutil -->
+        <footer class="footer">
+            <p class="footer-text">Riot Games · League of Legends · Proyecto fan sin fines de lucro</p>
+        </footer>
+    </main>
+
+    <!-- Modal de advertencia (se muestra al clicar "Advertencia") -->
+    <dialog class="modal" id="modalAdvertencia" role="alertdialog" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+        <div class="modal-backdrop" tabindex="-1"></div>
+        <div class="modal-content warning-modal">
+            <div class="modal-header">
+                <span class="modal-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                </span>
+                <h2 id="modalTitle">ÚLTIMA ADVERTENCIA</h2>
+            </div>
+            <div class="modal-body" id="modalDesc">
+                <p class="warning-line"><strong>Atentos a todo.</strong></p>
+                <p class="warning-line"><strong>No todo es lo que parece.</strong></p>
+                <p class="warning-line"><strong>Elegid bien vuestras respuestas.</strong></p>
+                <p class="warning-final">Una vez crucéis esta línea, no hay vuelta atrás.<br>El modo <span class="troll-label">ADVERTENCIA</span> no perdona la ingenuidad.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="modalCancel">Volver</button>
+                <button class="modal-btn modal-btn-confirm" id="modalConfirm">ENTENDIDO. ENTRAR.</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Toast/Notificación para feedback -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
