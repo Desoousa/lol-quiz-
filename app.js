@@ -797,6 +797,15 @@ function loadTrack(index) {
     document.getElementById('musicCredit').textContent = track.credit;
 
     console.log(`🎵 Cargado: ${track.title} — ${track.credit}`);
+
+    // Cuando metadata cargada, saltar a la mitad y poner volumen 5%
+    audio.addEventListener('loadedmetadata', () => {
+        audio.currentTime = audio.duration / 2;
+        audio.volume = 0.05; // 5%
+        document.getElementById('volumeSlider').value = 5;
+        document.getElementById('volumeValue').textContent = '5';
+        console.log(`🎵 Iniciando en medio (${(audio.duration/2).toFixed(1)}s de ${audio.duration.toFixed(1)}s) vol 5%`);
+    }, { once: true });
 }
 
 function playTrack() {
@@ -845,7 +854,7 @@ function playPrevTrack() {
 }
 
 function attemptAutoplay(audio) {
-    audio.volume = 0.3; // 30% por defecto
+    // Volumen ya se establece en loadedmetadata (5%)
     const playPromise = audio.play();
     if (playPromise !== undefined) {
         playPromise.then(() => {
