@@ -381,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initParticles();
     bindEvents();
     initEntranceAnimations();
+    initBackgroundMusic();
     console.log('%c🎮 Pruebas del Invocador cargado', 'color: #ffc400; font-size: 14px; font-weight: bold;');
     console.log('%cModo serio: conocimiento real de LoL', 'color: #6ba3e0;');
     console.log('%cModo advertencia: caos y trolleo', 'color: #e82a2a;');
@@ -750,6 +751,211 @@ function initEntranceAnimations() {
     // Las animaciones principales están en CSS (fadeInUp con delays)
     // Esta función puede usarse para triggers extra si se necesita
     console.log('%c✨ Animaciones de entrada activadas', 'color: #a8cff5;');
+}
+
+// ========================================
+// MÚSICA DE FONDO
+// ========================================
+const MUSIC_TRACKS = [
+    { file: 'Still Here - Season 2024 Cinematic.mp3', title: 'Still Here', credit: 'Season 2024 Cinematic (ft. Forts, Tiffany Aris, 2WEI)' },
+    { file: 'Ma Meilleure Ennemie - Arcane S2.mp3', title: 'Ma Meilleure Ennemie', credit: 'Arcane Season 2 (Stromae, Pomme)' },
+    { file: 'The Line - Arcane S2.mp3', title: 'The Line', credit: 'Arcane Season 2 (Twenty One Pilots)' },
+];
+
+let currentTrackIndex = -1;
+let musicUnlocked = false;
+
+function initBackgroundMusic() {
+    const audio = document.getElementById('bgMusic');
+    if (!audio) return;
+
+    // Elegir track aleatorio inicial
+    currentTrackIndex = Math.floor(Math.random() * MUSIC_TRACKS.length);
+    loadTrack(currentTrackIndex);
+
+    // Intentar autoplay
+    attemptAutoplay(audio);
+
+    // Cuando termina, pasar al siguiente aleatorio
+    audio.addEventListener('ended', () => playNextTrack());
+
+    // Inicializar UI
+    initMusicController(audio);
+
+    console.log('%c🎵 Sistema de música inicializado', 'color: #ffc400; font-weight: bold;');
+}
+
+function loadTrack(index) {
+    const audio = document.getElementById('bgMusic');
+    const track = MUSIC_TRACKS[index];
+    audio.src = `musica/${track.file}`;
+    audio.load();
+
+    // Actualizar UI
+    document.getElementById('musicTitle').textContent = track.title;
+    document.getElementById('musicCredit').textContent = track.credit;
+
+    console.log(`🎵 Cargado: ${track.title} — ${track.credit}`);
+}
+
+function playTrack() {
+    const audio = document.getElementById('bgMusic');
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // Autoplay bloqueado, esperar interacción
+            waitForUnlock(audio);
+        });
+    }
+    updatePlayPauseUI(false);
+}
+
+function pauseTrack() {
+    const audio = document.getElementById('bgMusic');
+    audio.pause();
+    updatePlayPauseUI(true);
+}
+
+function togglePlayPause() {
+    const audio = document.getElementById('bgMusic');
+    if (audio.paused) {
+        playTrack();
+    } else {
+        pauseTrack();
+    }
+}
+
+function playNextTrack() {
+    // Siguiente aleatorio (diferente al actual)
+    const available = MUSIC_TRACKS.map((_, i) => i).filter(i => i !== currentTrackIndex);
+    if (available.length === 0) return;
+    currentTrackIndex = available[Math.floor(Math.random() * available.length)];
+    loadTrack(currentTrackIndex);
+    playTrack();
+}
+
+function playPrevTrack() {
+    // Anterior aleatorio (diferente al actual)
+    const available = MUSIC_TRACKS.map((_, i) => i).filter(i => i !== currentTrackIndex);
+    if (available.length === 0) return;
+    currentTrackIndex = available[Math.floor(Math.random() * available.length)];
+    loadTrack(currentTrackIndex);
+    playTrack();
+}
+
+function attemptAutoplay(audio) {
+    audio.volume = 0.3; // 30% por defecto
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+        playPromise.then(() => {
+            musicUnlocked = true;
+            updatePlayPauseUI(false);
+        }).catch(() => {
+            waitForUnlock(audio);
+        });
+    }
+}
+
+function waitForUnlock(audio) {
+    if (musicUnlocked) return;
+    const unlock = () => {
+        musicUnlocked = true;
+        audio.play().then(() => updatePlayPauseUI(false)).catch(() => {});
+        document.removeEventListener('click', unlock);
+        document.removeEventListener('keydown', unlock);
+    };
+    document.addEventListener('click', unlock, { once: true });
+    document.addEventListener('keydown', unlock, { once: true });
+}
+
+function updatePlayPauseUI(isPaused) {
+    const playIcon = document.querySelector('.music-play-pause .play-icon');
+    const pauseIcon = document.querySelector('.music-play-pause .pause-icon');
+    if (playIcon && pauseIcon) {
+        playIcon.style.display = isPaused ? 'block' : 'none';
+        pauseIcon.style.display = isPaused ? 'none' : 'block';
+    }
+}
+
+function setVolume(value) {
+    const audio = document.getElementById('bgMusic');
+    const volume = Math.max(0, Math.min(100, value)) / 100;
+    audio.volume = volume;
+    document.getElementById('volumeSlider').value = Math.round(volume * 100);
+    document.getElementById('volumeValue').textContent = Math.round(volume * 100);
+    updateMuteUI(volume === 0);
+}
+
+function toggleMute() {
+    const audio = document.getElementById('bgMusic');
+    audio.muted = !audio.muted;
+    updateMuteUI(audio.muted);
+    if (!audio.muted && audio.volume === 0) {
+        audio.volume = 0.3;
+        document.getElementById('volumeSlider').value = 30;
+        document.getElementById('volumeValue').textContent = '30';
+    }
+}
+
+function updateMuteUI(isMuted) {
+    const toggle = document.getElementById('musicToggle');
+    const muteBtn = document.getElementById('musicMute');
+    const volumeIcon = muteBtn.querySelector('.volume-icon');
+    const muteIcon = muteBtn.querySelector('.mute-icon');
+
+    if (toggle) toggle.classList.toggle('muted', isMuted);
+    if (volumeIcon && muteIcon) {
+        volumeIcon.style.display = isMuted ? 'none' : 'block';
+        muteIcon.style.display = isMuted ? 'block' : 'none';
+    }
+}
+
+function initMusicController(audio) {
+    const toggle = document.getElementById('musicToggle');
+    const panel = document.getElementById('musicPanel');
+    const playPause = document.getElementById('musicPlayPause');
+    const prevBtn = document.getElementById('musicPrev');
+    const nextBtn = document.getElementById('musicNext');
+    const muteBtn = document.getElementById('musicMute');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    // Toggle panel
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Cerrar panel al click fuera
+    document.addEventListener('click', (e) => {
+        if (!toggle.contains(e.target) && !panel.contains(e.target)) {
+            panel.style.display = 'none';
+        }
+    });
+
+    // Play/Pause
+    playPause.addEventListener('click', togglePlayPause);
+
+    // Prev/Next
+    prevBtn.addEventListener('click', playPrevTrack);
+    nextBtn.addEventListener('click', playNextTrack);
+
+    // Mute
+    muteBtn.addEventListener('click', toggleMute);
+
+    // Volume slider
+    volumeSlider.addEventListener('input', (e) => setVolume(e.target.value));
+
+    // Sincronizar volumen inicial
+    setVolume(30);
+
+    // Actualizar UI cuando cambia el volumen por código
+    audio.addEventListener('volumechange', () => {
+        if (!audio.muted) {
+            document.getElementById('volumeSlider').value = Math.round(audio.volume * 100);
+            document.getElementById('volumeValue').textContent = Math.round(audio.volume * 100);
+        }
+        updateMuteUI(audio.muted);
+    });
 }
 
 // ========================================
