@@ -221,8 +221,8 @@ function initBackgroundMedia() {
     const existingMedia = bgLayer.querySelectorAll('.bg-image, .bg-video');
     existingMedia.forEach(el => el.remove());
 
-    // 50/50: arranca con video o con imágenes
-    const startWithVideo = videos.length > 0 && Math.random() < 0.5;
+    // SIEMPRE arrancar con video si hay videos disponibles
+    const startWithVideo = videos.length > 0;
 
     let mediaSequence = [];
 
@@ -238,7 +238,7 @@ function initBackgroundMedia() {
             mediaSequence.push(...secondVideo);
         }
     } else {
-        // Solo imágenes (comportamiento original) pero con pool ampliado
+        // Fallback: solo imágenes si no hay videos
         mediaSequence = shuffleArray(images).slice(0, 10);
     }
 
