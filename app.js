@@ -788,11 +788,22 @@ function initEntryScreen() {
         // 2. Animar salida de pantalla
         screen.classList.add('exiting');
         
-        // 3. Eliminar del DOM tras animación
-        screen.addEventListener('animationend', () => {
+        // 3. Eliminar del DOM tras animación (con timeout de seguridad)
+        const removeScreen = () => {
             screen.remove();
             console.log('🎮 Pantalla entrada completada → menú principal');
-        }, { once: true });
+        };
+        
+        screen.addEventListener('animationend', removeScreen, { once: true });
+        
+        // Timeout de seguridad: si animationend no dispara en 1s, forzar eliminación
+        setTimeout(() => {
+            if (document.body.contains(screen)) {
+                console.warn('⚠️ animationend no disparó, forzando eliminación');
+                screen.removeEventListener('animationend', removeScreen);
+                removeScreen();
+            }
+        }, 1000);
     });
 
     // Accesibilidad: Enter/Space también funciona
