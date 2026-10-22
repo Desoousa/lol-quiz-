@@ -757,9 +757,9 @@ function initEntranceAnimations() {
 // MÚSICA DE FONDO
 // ========================================
 const MUSIC_TRACKS = [
-    { file: 'Still Here - Season 2024 Cinematic.mp3', title: 'Still Here', credit: 'Season 2024 Cinematic (ft. Forts, Tiffany Aris, 2WEI)' },
-    { file: 'Ma Meilleure Ennemie - Arcane S2.mp3', title: 'Ma Meilleure Ennemie', credit: 'Arcane Season 2 (Stromae, Pomme)' },
-    { file: 'The Line - Arcane S2.mp3', title: 'The Line', credit: 'Arcane Season 2 (Twenty One Pilots)' },
+    { file: 'Still Here  Season 2024 Cinematic - League of Legends (ft. Forts, Tiffany Aris, and 2WEI) - League of Legends.mp3', title: 'Still Here', credit: 'Season 2024 Cinematic (ft. Forts, Tiffany Aris, 2WEI)' },
+    { file: 'Stromae, Pomme - "Ma Meilleure Ennemie" (from Arcane Season 2) [Official Music Video] - League of Legends.mp3', title: 'Ma Meilleure Ennemie', credit: 'Arcane Season 2 (Stromae, Pomme)' },
+    { file: 'Twenty One Pilots - "The Line" (from Arcane Season 2) [Official Music Video] - League of Legends.mp3', title: 'The Line', credit: 'Arcane Season 2 (Twenty One Pilots)' },
 ];
 
 let currentTrackIndex = -1;
