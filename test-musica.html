@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Solo Música</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px; background: #0a0a0f; color: #eee; max-width: 600px; margin: 0 auto; }
+        h1 { color: #ffc400; }
+        .track { background: #132038; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #2d5a9e; }
+        .track h3 { margin: 0 0 5px; color: #ffc400; }
+        .track p { margin: 0; color: #6ba3e0; font-size: 14px; }
+        button { background: #ffc400; color: #000; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; margin: 5px; }
+        button:hover { background: #ffd14d; }
+        #log { background: #030305; padding: 15px; height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #2d5a9e; border-radius: 8px; white-space: pre-wrap; }
+        .log-line { margin: 2px 0; }
+        .log-error { color: #ff5555; }
+        .log-success { color: #55ff55; }
+        .log-info { color: #aaaaff; }
+    </style>
+</head>
+<body>
+    <h1>🎵 Test Reproductor Música</h1>
+    <p>Click en botones para probar. Abre consola (F12) también.</p>
+
+    <div class="track">
+        <h3>still-here.mp3</h3>
+        <p>Season 2024 Cinematic (ft. Forts, Tiffany Aris, 2WEI)</p>
+        <button onclick="testTrack(0)">▶ Probar</button>
+    </div>
+    <div class="track">
+        <h3>ma-meilleure-ennemie.mp3</h3>
+        <p>Arcane Season 2 (Stromae, Pomme)</p>
+        <button onclick="testTrack(1)">▶ Probar</button>
+    </div>
+    <div class="track">
+        <h3>the-line.mp3</h3>
+        <p>Arcane Season 2 (Twenty One Pilots)</p>
+        <button onclick="testTrack(2)">▶ Probar</button>
+    </div>
+
+    <button onclick="testAll()">▶ Probar TODOS secuencial</button>
+    <button onclick="clearLog()">🗑 Limpiar log</button>
+
+    <div id="log"></div>
+
+    <script>
+        const TRACKS = [
+            { file: 'still-here.mp3', title: 'Still Here' },
+            { file: 'ma-meilleure-ennemie.mp3', title: 'Ma Meilleure Ennemie' },
+            { file: 'the-line.mp3', title: 'The Line' },
+        ];
+
+        const logEl = document.getElementById('log');
+        function log(msg, cls = '') {
+            const line = document.createElement('div');
+            line.className = `log-line ${cls}`;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logEl.appendChild(line);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(msg);
+        }
+
+        function testTrack(index) {
+            const track = TRACKS[index];
+            log(`▶ Cargando: ${track.title} (${track.file})`, 'log-info');
+
+            const audio = new Audio();
+            audio.src = `musica/${track.file}`;
+            audio.volume = 0.5;
+
+            audio.addEventListener('loadstart', () => log('loadstart', 'log-info'));
+            audio.addEventListener('loadeddata', () => log('loadeddata ✓', 'log-success'));
+            audio.addEventListener('canplay', () => log('canplay ✓', 'log-success'));
+            audio.addEventListener('playing', () => log('🎵 PLAYING!', 'log-success'));
+            audio.addEventListener('error', (e) => log(`ERROR: ${audio.error?.code} ${audio.error?.message}`, 'log-error'));
+            audio.addEventListener('ended', () => log('ended', 'log-info'));
+
+            audio.play().catch(err => log(`play() rejected: ${err.name} - ${err.message}`, 'log-error'));
+        }
+
+        async function testAll() {
+            for (let i = 0; i < TRACKS.length; i++) {
+                await testTrack(i);
+                await new Promise(r => setTimeout(r, 8000)); // 8 seg cada uno
+            }
+        }
+
+        function clearLog() { logEl.innerHTML = ''; }
+    </script>
+</body>
+</html>

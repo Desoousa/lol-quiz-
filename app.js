@@ -376,6 +376,7 @@ const DOM = {
 // INICIALIZACIÓN
 // ========================================
 document.addEventListener('DOMContentLoaded', () => {
+    initEntryScreen();
     initBackgroundImages();
     initChampionSilhouettes();
     initParticles();
@@ -385,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('%c🎮 Pruebas del Invocador cargado', 'color: #ffc400; font-size: 14px; font-weight: bold;');
     console.log('%cModo serio: conocimiento real de LoL', 'color: #6ba3e0;');
     console.log('%cModo advertencia: caos y trolleo', 'color: #e82a2a;');
-    console.log('%c💡 Pista: Pasa el ratón por las siluetas... algunas no son lo que parecen', 'color: #7fb800; font-style: italic;');
+    console.log('%c💡 Pista: Pasa el ratón por las siluetas... algunas no son lo que parece', 'color: #7fb800; font-style: italic;');
 });
 
 // ========================================
@@ -751,6 +752,50 @@ function initEntranceAnimations() {
     // Las animaciones principales están en CSS (fadeInUp con delays)
     // Esta función puede usarse para triggers extra si se necesita
     console.log('%c✨ Animaciones de entrada activadas', 'color: #a8cff5;');
+}
+
+// ========================================
+// PANTALLA DE ENTRADA (Click para activar sonido)
+// ========================================
+function initEntryScreen() {
+    const screen = document.getElementById('entryScreen');
+    const btn = document.getElementById('entryBtn');
+    
+    if (!screen || !btn) return;
+
+    btn.addEventListener('click', () => {
+        // 1. Desmutear música y poner volumen 5%
+        const audio = document.getElementById('bgMusic');
+        if (audio) {
+            audio.muted = false;
+            audio.volume = 0.05;
+            document.getElementById('volumeSlider').value = 5;
+            document.getElementById('volumeValue').textContent = '5';
+            updateMuteUI(false);
+            // Asegurar reproducción
+            audio.play().catch(() => {});
+            console.log('🎵 Pantalla entrada: música desmuteada + vol 5%');
+        }
+
+        // 2. Animar salida de pantalla
+        screen.classList.add('exiting');
+        
+        // 3. Eliminar del DOM tras animación
+        screen.addEventListener('animationend', () => {
+            screen.remove();
+            console.log('🎮 Pantalla entrada completada → menú principal');
+        }, { once: true });
+    });
+
+    // Accesibilidad: Enter/Space también funciona
+    btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            btn.click();
+        }
+    });
+
+    console.log('%c🚪 Pantalla de entrada lista', 'color: #ffc400; font-weight: bold;');
 }
 
 // ========================================

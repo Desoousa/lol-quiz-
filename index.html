@@ -10,6 +10,29 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Pantalla de entrada (click para activar sonido + entrar) -->
+    <div class="entry-screen" id="entryScreen" role="dialog" aria-modal="true" aria-labelledby="entryTitle">
+        <div class="entry-content">
+            <div class="entry-logo-container">
+                <svg class="entry-logo" viewBox="0 0 200 200" aria-hidden="true">
+                    <circle cx="100" cy="100" r="95" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <path d="M100 30 L100 170 M30 100 L170 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M60 60 L140 140 M140 60 L60 140" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+                </svg>
+            </div>
+            <h1 id="entryTitle" class="entry-title">PRUEBAS DEL INVOCADOR</h1>
+            <p class="entry-subtitle">La música se activará al entrar</p>
+            <p class="entry-hint">Pulsa el botón para continuar con sonido</p>
+            <button class="entry-btn" id="entryBtn" aria-label="Entrar con sonido activado">
+                <span class="entry-btn-text">ENTRAR CON SONIDO</span>
+                <span class="entry-btn-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                </span>
+            </button>
+            <div class="entry-particles" aria-hidden="true"></div>
+        </div>
+    </div>
+
     <!-- Fondo: Imágenes y videos reales de League of Legends (inyectados por JS) -->
     <div class="bg-layer" id="bgLayer">
         <!-- Overlay encima de las imágenes/videos -->
