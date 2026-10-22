@@ -12,6 +12,11 @@
 <body>
     <!-- Pantalla de entrada (click para activar sonido + entrar) -->
     <div class="entry-screen" id="entryScreen" role="dialog" aria-modal="true" aria-labelledby="entryTitle">
+        <!-- Fondo con splash art aleatoria (igual que menú principal) -->
+        <div class="entry-bg-layer" id="entryBgLayer">
+            <div class="entry-bg-image" aria-hidden="true"></div>
+            <div class="entry-bg-overlay"></div>
+        </div>
         <div class="entry-content">
             <div class="entry-logo-container">
                 <svg class="entry-logo" viewBox="0 0 200 200" aria-hidden="true">

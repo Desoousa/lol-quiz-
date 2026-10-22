@@ -760,8 +760,16 @@ function initEntranceAnimations() {
 function initEntryScreen() {
     const screen = document.getElementById('entryScreen');
     const btn = document.getElementById('entryBtn');
+    const entryBgImage = document.getElementById('entryBgLayer')?.querySelector('.entry-bg-image');
     
     if (!screen || !btn) return;
+
+    // Inicializar splash art aleatoria en el fondo de la pantalla de entrada
+    if (entryBgImage && typeof BACKGROUND_IMAGES !== 'undefined' && BACKGROUND_IMAGES.length > 0) {
+        const randomImg = BACKGROUND_IMAGES[Math.floor(Math.random() * BACKGROUND_IMAGES.length)];
+        entryBgImage.style.backgroundImage = `url("${randomImg.url}")`;
+        console.log(`🎨 Entry screen fondo: ${randomImg.name} (${randomImg.credit})`);
+    }
 
     btn.addEventListener('click', () => {
         // 1. Desmutear música y poner volumen 5%
