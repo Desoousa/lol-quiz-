@@ -769,11 +769,15 @@ function initBackgroundMusic() {
     const audio = document.getElementById('bgMusic');
     if (!audio) return;
 
+    // Configurar para autoplay SIN sonido (política navegadores)
+    audio.muted = true;
+    audio.autoplay = true;
+
     // Elegir track aleatorio inicial
     currentTrackIndex = Math.floor(Math.random() * MUSIC_TRACKS.length);
     loadTrack(currentTrackIndex);
 
-    // Intentar autoplay
+    // Intentar autoplay muted (siempre funciona)
     attemptAutoplay(audio);
 
     // Cuando termina, pasar al siguiente aleatorio
@@ -782,7 +786,7 @@ function initBackgroundMusic() {
     // Inicializar UI
     initMusicController(audio);
 
-    console.log('%c🎵 Sistema de música inicializado', 'color: #ffc400; font-weight: bold;');
+    console.log('%c🎵 Sistema de música inicializado (muted autoplay)', 'color: #ffc400; font-weight: bold;');
 }
 
 function loadTrack(index) {
@@ -798,13 +802,11 @@ function loadTrack(index) {
 
     console.log(`🎵 Cargado: ${track.title} — ${track.credit}`);
 
-    // Cuando metadata cargada, saltar a la mitad y poner volumen 5%
+    // Cuando metadata cargada: saltar a la mitad
+    // NO ponemos volumen ni unmute aquí - se hace en unlock
     audio.addEventListener('loadedmetadata', () => {
         audio.currentTime = audio.duration / 2;
-        audio.volume = 0.05; // 5%
-        document.getElementById('volumeSlider').value = 5;
-        document.getElementById('volumeValue').textContent = '5';
-        console.log(`🎵 Iniciando en medio (${(audio.duration/2).toFixed(1)}s de ${audio.duration.toFixed(1)}s) vol 5%`);
+        console.log(`🎵 Iniciando en medio (${(audio.duration/2).toFixed(1)}s de ${audio.duration.toFixed(1)}s) — muted hasta interacción`);
     }, { once: true });
 }
 
@@ -854,11 +856,11 @@ function playPrevTrack() {
 }
 
 function attemptAutoplay(audio) {
-    // Volumen ya se establece en loadedmetadata (5%)
+    // Autoplay muted - siempre funciona
     const playPromise = audio.play();
     if (playPromise !== undefined) {
         playPromise.then(() => {
-            musicUnlocked = true;
+            console.log('🎵 Autoplay MUTED iniciado');
             updatePlayPauseUI(false);
         }).catch(() => {
             waitForUnlock(audio);
@@ -870,6 +872,13 @@ function waitForUnlock(audio) {
     if (musicUnlocked) return;
     const unlock = () => {
         musicUnlocked = true;
+        // Desmutear y poner volumen 5% en primera interacción
+        audio.muted = false;
+        audio.volume = 0.05;
+        document.getElementById('volumeSlider').value = 5;
+        document.getElementById('volumeValue').textContent = '5';
+        updateMuteUI(false);
+        console.log('🎵 Desmuteado + vol 5% tras interacción usuario');
         audio.play().then(() => updatePlayPauseUI(false)).catch(() => {});
         document.removeEventListener('click', unlock);
         document.removeEventListener('keydown', unlock);
