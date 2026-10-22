@@ -788,14 +788,28 @@ function initBackgroundMusic() {
 function loadTrack(index) {
     const audio = document.getElementById('bgMusic');
     const track = MUSIC_TRACKS[index];
-    audio.src = `musica/${track.file}`;
+    const fullPath = `musica/${track.file}`;
+    audio.src = fullPath;
     audio.load();
 
     // Actualizar UI
     document.getElementById('musicTitle').textContent = track.title;
     document.getElementById('musicCredit').textContent = track.credit;
 
-    console.log(`🎵 Cargado: ${track.title} — ${track.credit}`);
+    console.log(`🎵 Cargado: ${track.title}`);
+    console.log(`   Ruta: ${fullPath}`);
+    console.log(`   Audio element:`, audio);
+    console.log(`   audio.src: ${audio.src}`);
+    console.log(`   audio.readyState: ${audio.readyState}`);
+    console.log(`   audio.error:`, audio.error);
+
+    // Event listeners para debug
+    audio.addEventListener('loadstart', () => console.log('🎵 loadstart'));
+    audio.addEventListener('loadeddata', () => console.log('🎵 loadeddata - listo para reproducir'));
+    audio.addEventListener('canplay', () => console.log('🎵 canplay'));
+    audio.addEventListener('error', (e) => console.error('🎵 ERROR:', audio.error, e));
+    audio.addEventListener('waiting', () => console.log('🎵 waiting...'));
+    audio.addEventListener('playing', () => console.log('🎵 PLAYING!'));
 }
 
 function playTrack() {
