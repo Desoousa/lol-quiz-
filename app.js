@@ -171,8 +171,15 @@ const BACKGROUND_IMAGES = [
 function buildMediaPool() {
     const pool = [];
 
-    // Videos remotos (oficiales de Riot)
-    BACKGROUND_VIDEOS.forEach(v => pool.push({ ...v, type: 'video', remote: true }));
+    // Detectar si estamos en file:// (local) -> CORS bloquea videos remotos
+    const isLocalFile = window.location.protocol === 'file:';
+
+    // Videos remotos (oficiales de Riot) - SOLO si NO es file://
+    if (!isLocalFile) {
+        BACKGROUND_VIDEOS.forEach(v => pool.push({ ...v, type: 'video', remote: true }));
+    } else {
+        console.log('%c📁 Modo local (file://) detectado: videos remotos desactivados (CORS)', 'color: #ffaa00;');
+    }
 
     // Videos locales (si hay carpeta videos/ con archivos)
     // Nombres esperados en D:\Proyecto\juego de lol\videos\
@@ -192,7 +199,7 @@ function buildMediaPool() {
         src: `videos/${v.file}`
     }));
 
-    // Imágenes (splash arts)
+    // Imágenes (splash arts) - siempre disponibles
     BACKGROUND_IMAGES.forEach(img => pool.push({ ...img, type: 'image' }));
 
     return pool;
@@ -734,6 +741,15 @@ function playSound(type) {
     // gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
     // osc.start();
     // osc.stop(audioCtx.currentTime + 0.2);
+}
+
+// ========================================
+// ANIMACIONES DE ENTRADA
+// ========================================
+function initEntranceAnimations() {
+    // Las animaciones principales están en CSS (fadeInUp con delays)
+    // Esta función puede usarse para triggers extra si se necesita
+    console.log('%c✨ Animaciones de entrada activadas', 'color: #a8cff5;');
 }
 
 // ========================================
