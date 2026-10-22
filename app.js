@@ -90,8 +90,56 @@ const TROLL_CHAMPIONS = [
 ];
 
 // ========================================
-// FONDO: IMÁGENES ALEATORIAS DE LOL (Splash Arts, Skins)
+// FONDO: MEDIA ALEATORIA DE LOL (Videos + Splash Arts)
 // ========================================
+
+// Videos oficiales de Riot (CDN público - ligeros y fiables)
+const BACKGROUND_VIDEOS = [
+    {
+        id: 'lol-promo-1',
+        name: 'LoL Promo Clip 1',
+        src: 'https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/bbc27473157462adacf0de441a8796268eb2d0ac.mp4?accountingTag=LoL',
+        credit: 'Riot Games - Promo Oficial',
+        duration: 30 // segundos de bucle aproximado
+    },
+    {
+        id: 'lol-promo-2',
+        name: 'LoL Promo Clip 2',
+        src: 'https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/1f5b2cf01a1cf2afa1ce61febee6e2e900808347.mp4?accountingTag=LoL',
+        credit: 'Riot Games - Promo Oficial',
+        duration: 30
+    },
+    {
+        id: 'lol-promo-3',
+        name: 'LoL Promo Clip 3',
+        src: 'https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/0a9b9f8dacb54086c58c1af8aa880d7cf6d7fea6.mp4?accountingTag=LoL',
+        credit: 'Riot Games - Promo Oficial',
+        duration: 30
+    },
+    {
+        id: 'lol-promo-live',
+        name: 'LoL Live/News Promo',
+        src: 'https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/69b0e6a4393233da0d292c286fd371cfa036d30f.mp4?accountingTag=LoL',
+        credit: 'Riot Games - Live/News',
+        duration: 35
+    },
+    {
+        id: 'lol-promo-4',
+        name: 'LoL Promo Clip 4',
+        src: 'https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/e5791dbc0787a96e83b82df20d44375f09f4d861.mp4?accountingTag=LoL',
+        credit: 'Riot Games - Promo Oficial',
+        duration: 30
+    },
+    {
+        id: 'lol-promo-webm',
+        name: 'LoL Promo WebM',
+        src: 'https://cmsassets.rgpub.io/sanity/files/dsfx7636/news/8ab3e227121c53aacab0c9b9f7a48adbc65db520.webm?accountingTag=LoL',
+        credit: 'Riot Games - Promo WebM',
+        duration: 40
+    }
+];
+
+// Imágenes existentes (splash arts)
 const BACKGROUND_IMAGES = [
     { id: 'jinx-sg', name: 'Jinx Star Guardian', url: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Jinx_13.jpg', credit: 'Skin Star Guardian' },
     { id: 'ahri-kda', name: 'Ahri K/DA ALL OUT', url: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_37.jpg', credit: 'Skin K/DA' },
@@ -119,6 +167,37 @@ const BACKGROUND_IMAGES = [
     { id: 'aurora', name: 'Aurora', url: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aurora_0.jpg', credit: 'Splash Clásica' },
 ];
 
+// Pool unificado: videos remotos + imágenes + videos locales (si existen)
+function buildMediaPool() {
+    const pool = [];
+
+    // Videos remotos (oficiales de Riot)
+    BACKGROUND_VIDEOS.forEach(v => pool.push({ ...v, type: 'video', remote: true }));
+
+    // Videos locales (si hay carpeta videos/ con archivos)
+    // Nombres esperados en D:\Proyecto\juego de lol\videos\
+    const localVideoNames = [
+        { id: 'awaken', name: 'Awaken', file: 'awaken.mp4', credit: 'Cinemática Awaken' },
+        { id: 'warriors', name: 'Warriors', file: 'warriors.mp4', credit: 'Cinemática Warriors' },
+        { id: 'the-hunt', name: 'The Hunt', file: 'the-hunt.mp4', credit: 'Cinemática The Hunt' },
+        { id: 'kda-popstars', name: 'K/DA POP/STARS', file: 'kda-popstars.mp4', credit: 'Cinemática K/DA' },
+        { id: 'kda-more', name: 'K/DA MORE', file: 'kda-more.mp4', credit: 'Cinemática K/DA MORE' },
+        { id: 'arcane', name: 'Arcane', file: 'arcane.mp4', credit: 'Serie Arcane' },
+    ];
+    localVideoNames.forEach(v => pool.push({
+        ...v,
+        type: 'video',
+        remote: false,
+        local: true,
+        src: `videos/${v.file}`
+    }));
+
+    // Imágenes (splash arts)
+    BACKGROUND_IMAGES.forEach(img => pool.push({ ...img, type: 'image' }));
+
+    return pool;
+}
+
 // Barajar array (Fisher-Yates)
 function shuffleArray(array) {
     const arr = [...array];
@@ -129,33 +208,146 @@ function shuffleArray(array) {
     return arr;
 }
 
-// Inicializar imágenes de fondo aleatorias
-function initBackgroundImages() {
+// Inicializar fondo con videos e imágenes aleatorias
+function initBackgroundMedia() {
     const bgLayer = document.getElementById('bgLayer');
     if (!bgLayer) return;
 
-    // Seleccionar 10 imágenes aleatorias del pool
-    const selected = shuffleArray(BACKGROUND_IMAGES).slice(0, 10);
+    const mediaPool = buildMediaPool();
+    const videos = mediaPool.filter(m => m.type === 'video');
+    const images = mediaPool.filter(m => m.type === 'image');
 
-    // Limpiar imágenes existentes (excepto overlay)
-    const existingImages = bgLayer.querySelectorAll('.bg-image');
-    existingImages.forEach(img => img.remove());
+    // Limpiar contenido previo (excepto overlay)
+    const existingMedia = bgLayer.querySelectorAll('.bg-image, .bg-video');
+    existingMedia.forEach(el => el.remove());
 
-    // Crear nuevas imágenes con orden aleatorio
-    selected.forEach((imgData, index) => {
-        const bgImage = document.createElement('div');
-        bgImage.className = 'bg-image';
-        bgImage.setAttribute('aria-hidden', 'true');
-        bgImage.style.backgroundImage = `url("${imgData.url}")`;
-        bgImage.style.animationDelay = `${-index * 5.5}s`;
-        bgImage.dataset.champion = imgData.name;
-        bgImage.dataset.credit = imgData.credit;
-        bgLayer.appendChild(bgImage);
+    // 50/50: arranca con video o con imágenes
+    const startWithVideo = videos.length > 0 && Math.random() < 0.5;
+
+    let mediaSequence = [];
+
+    if (startWithVideo) {
+        // 1 video aleatorio + 8-10 imágenes + posibilidad de volver a video
+        const videoPick = shuffleArray(videos).slice(0, 1);
+        const imagePicks = shuffleArray(images).slice(0, 9);
+        mediaSequence = [...videoPick, ...imagePicks];
+
+        // Añadir un 2º video al final del ciclo (opcional, 30% chance)
+        if (videos.length > 1 && Math.random() < 0.3) {
+            const secondVideo = shuffleArray(videos.filter(v => v.id !== videoPick[0].id)).slice(0, 1);
+            mediaSequence.push(...secondVideo);
+        }
+    } else {
+        // Solo imágenes (comportamiento original) pero con pool ampliado
+        mediaSequence = shuffleArray(images).slice(0, 10);
+    }
+
+    // Aplicar estilos y montar en el DOM
+    mediaSequence.forEach((media, index) => {
+        if (media.type === 'video') {
+            createBgVideo(bgLayer, media, index);
+        } else {
+            createBgImage(bgLayer, media, index);
+        }
     });
 
     // Log para debug
-    console.log('%c🎨 Fondo aleatorio cargado:', 'color: #ffc400; font-weight: bold;');
-    selected.forEach((img, i) => console.log(`  ${i + 1}. ${img.name} (${img.credit})`));
+    console.log('%c🎬 Fondo multimedia cargado:', 'color: #ffc400; font-weight: bold;');
+    mediaSequence.forEach((m, i) => {
+        const tag = m.type === 'video' ? '🎞️' : '🖼️';
+        const srcTag = m.remote ? ' (remoto)' : (m.local ? ' (local)' : '');
+        console.log(`  ${i + 1}. ${tag} ${m.name} (${m.credit})${srcTag}`);
+    });
+}
+
+// Crear elemento de video de fondo
+function createBgVideo(bgLayer, videoData, index) {
+    const video = document.createElement('video');
+    video.className = 'bg-video';
+    video.setAttribute('aria-hidden', 'true');
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    video.crossOrigin = 'anonymous';
+
+    // Delay escalonado (videos duran más, así que delay mayor)
+    const delay = index * 35; // ~35s por video (incluye fade)
+    video.style.animationDelay = `${-delay}s`;
+
+    // Source
+    const source = document.createElement('source');
+    source.src = videoData.src;
+    source.type = videoData.src.endsWith('.webm') ? 'video/webm' : 'video/mp4';
+    video.appendChild(source);
+
+    // Dataset para debug
+    video.dataset.name = videoData.name;
+    video.dataset.credit = videoData.credit;
+    video.dataset.duration = videoData.duration || 30;
+
+    // Fallback si falla la carga
+    video.addEventListener('error', () => handleVideoError(bgLayer, video, videoData, index));
+    video.addEventListener('loadeddata', () => {
+        console.log(`%c▶️ Video cargado: ${videoData.name}`, 'color: #00ffaa;');
+    });
+
+    bgLayer.appendChild(video);
+
+    // Intentar play (algunos navegadores exigen interacción)
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // Si falla autoplay, el video se quedará en el primer frame
+            // El fallback se activará por timeout si no carga
+        });
+    }
+
+    // Timeout de seguridad: si el video no reproduce en 8s, fallback a imagen
+    setTimeout(() => {
+        if (video.readyState < 2) { // HAVE_CURRENT_DATA = 2
+            handleVideoError(bgLayer, video, videoData, index);
+        }
+    }, 8000);
+}
+
+// Crear elemento de imagen de fondo (como antes)
+function createBgImage(bgLayer, imgData, index) {
+    const bgImage = document.createElement('div');
+    bgImage.className = 'bg-image';
+    bgImage.setAttribute('aria-hidden', 'true');
+    bgImage.style.backgroundImage = `url("${imgData.url}")`;
+    bgImage.style.animationDelay = `${-index * 5.5}s`;
+    bgImage.dataset.champion = imgData.name;
+    bgImage.dataset.credit = imgData.credit;
+    bgLayer.appendChild(bgImage);
+}
+
+// Manejar error de video -> fallback a imagen aleatoria
+function handleVideoError(bgLayer, videoEl, videoData, index) {
+    console.warn(`%c⚠️ Video falló/timeout: ${videoData.name} — fallback a imagen`, 'color: #ffaa00;');
+
+    // Eliminar video fallido
+    videoEl.remove();
+
+    // Pick una imagen aleatoria que no esté ya en el DOM
+    const usedNames = new Set(
+        Array.from(bgLayer.querySelectorAll('.bg-image, .bg-video'))
+            .map(el => el.dataset.champion || el.dataset.name)
+            .filter(Boolean)
+    );
+
+    const availableImages = BACKGROUND_IMAGES.filter(img => !usedNames.has(img.name));
+    if (availableImages.length === 0) return;
+
+    const fallbackImg = shuffleArray(availableImages)[0];
+    createBgImage(bgLayer, fallbackImg, index);
+    console.log(`%c🔄 Fallback imagen: ${fallbackImg.name}`, 'color: #00ffaa;');
+}
+
+// Compatibilidad: alias para código existente
+function initBackgroundImages() {
+    initBackgroundMedia();
 }
 
 // ========================================
