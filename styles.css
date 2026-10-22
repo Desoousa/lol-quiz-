@@ -1240,6 +1240,56 @@ body {
     50% { opacity: 1; }
 }
 
+/* ========================================
+   ESCAPARATE DE CAMPEONES (Pantalla entrada)
+   ======================================== */
+.entry-showcase {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.entry-showcase img {
+    width: 140px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-elevated);
+    opacity: 0.85;
+    filter: saturate(1.1) contrast(1.05);
+    transition: all var(--transition-normal);
+    transform-origin: center;
+}
+
+.entry-showcase img:hover {
+    opacity: 1;
+    transform: scale(1.05) translateY(-4px);
+    box-shadow: var(--shadow-glow-gold), var(--shadow-elevated);
+    z-index: 1;
+}
+
+.entry-showcase img:nth-child(odd) {
+    margin-top: var(--space-xs);
+}
+
+.entry-showcase img:nth-child(even) {
+    margin-bottom: var(--space-xs);
+}
+
+/* Responsive para showcase */
+@media (max-width: 480px) {
+    .entry-showcase {
+        gap: 4px;
+    }
+    .entry-showcase img {
+        width: 100px;
+        height: 145px;
+    }
+}
+
 .entry-btn {
     position: relative;
     display: inline-flex;
