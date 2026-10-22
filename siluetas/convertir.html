@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Convertir a Siluetas Negras</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; background: #1a1a2e; color: #eee; }
+        h1 { color: #ffc400; }
+        .dropzone { border: 3px dashed #ffc400; padding: 40px; text-align: center; margin: 20px 0; border-radius: 12px; cursor: pointer; transition: background 0.2s; }
+        .dropzone:hover, .dropzone.dragover { background: rgba(255,196,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-top: 20px; }
+        .item { background: #0d0d1a; border-radius: 8px; padding: 12px; text-align: center; }
+        .item img, .item canvas { max-width: 100%; height: auto; border-radius: 4px; background: #333; display: block; margin: 0 auto 8px; }
+        .item label { display: block; font-size: 12px; margin-bottom: 8px; color: #aaa; }
+        .btn { background: #ffc400; color: #000; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; margin: 4px; }
+        .btn:hover { background: #ffd14d; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .progress { height: 4px; background: #333; border-radius: 2px; margin: 8px 0; overflow: hidden; }
+        .progress-bar { height: 100%; background: #ffc400; width: 0%; transition: width 0.2s; }
+        .original-badge { background: #6ba3e0; color: #000; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+        .silhouette-badge { background: #00ffaa; color: #000; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🎨 Conversor de Siluetas Negras</h1>
+    <p>Arrastra tus imágenes aquí → se convierten a silueta negra (PNG transparente) → click "Descargar" → guárdalas en la misma carpeta.</p>
+
+    <div class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
+        <p>📁 <strong>Click o arrastra imágenes aquí</strong></p>
+        <p style="font-size:12px;color:#888;">Soporta: JPG, PNG, WebP, JFIF</p>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const grid = document.getElementById('grid');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+        dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+        dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+        fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+        async function handleFiles(files) {
+            const images = Array.from(files).filter(f => f.type.startsWith('image/'));
+            for (const file of images) {
+                await processImage(file);
+            }
+        }
+
+        function processImage(file) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onload = () => createSilhouette(img, file.name);
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function createSilhouette(img, name) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            // Dibujar original
+            ctx.drawImage(img, 0, 0);
+
+            // Convertir a silueta: alpha > 0 → negro, alpha = 0 → transparente
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const alpha = data[i + 3];
+                if (alpha > 0) {
+                    data[i] = 0;     // R
+                    data[i + 1] = 0; // G
+                    data[i + 2] = 0; // B
+                    data[i + 3] = 255; // Alpha completo
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+
+            // Mostrar en grid
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `
+                <label><span class="original-badge">Original</span> ${name} (${img.width}x${img.height})</label>
+                <img src="${canvas.toDataURL('image/png')}" alt="Silueta de ${name}">
+                <span class="silhouette-badge">Silueta lista</span>
+                <div class="progress"><div class="progress-bar" style="width:100%"></div></div>
+                <button class="btn" onclick="downloadSilhouette(this, '${name.replace(/\.[^.]+$/, '')}')">⬇ Descargar PNG</button>
+            `;
+            grid.appendChild(div);
+            // Guardar canvas en el div para descarga
+            div.dataset.canvas = canvas.toDataURL('image/png');
+            resolve();
+        }
+
+        function downloadSilhouette(btn, name) {
+            const div = btn.parentElement;
+            const dataUrl = div.dataset.canvas;
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = `${name}_silhouette.png`;
+            a.click();
+        }
+    </script>
+</body>
+</html>
