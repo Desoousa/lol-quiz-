@@ -757,9 +757,9 @@ function initEntranceAnimations() {
 // MÚSICA DE FONDO
 // ========================================
 const MUSIC_TRACKS = [
-    { file: 'Still Here  Season 2024 Cinematic - League of Legends (ft. Forts, Tiffany Aris, and 2WEI) - League of Legends.mp3', title: 'Still Here', credit: 'Season 2024 Cinematic (ft. Forts, Tiffany Aris, 2WEI)' },
-    { file: 'Stromae, Pomme - "Ma Meilleure Ennemie" (from Arcane Season 2) [Official Music Video] - League of Legends.mp3', title: 'Ma Meilleure Ennemie', credit: 'Arcane Season 2 (Stromae, Pomme)' },
-    { file: 'Twenty One Pilots - "The Line" (from Arcane Season 2) [Official Music Video] - League of Legends.mp3', title: 'The Line', credit: 'Arcane Season 2 (Twenty One Pilots)' },
+    { file: 'still-here.mp3', title: 'Still Here', credit: 'Season 2024 Cinematic (ft. Forts, Tiffany Aris, 2WEI)' },
+    { file: 'ma-meilleure-ennemie.mp3', title: 'Ma Meilleure Ennemie', credit: 'Arcane Season 2 (Stromae, Pomme)' },
+    { file: 'the-line.mp3', title: 'The Line', credit: 'Arcane Season 2 (Twenty One Pilots)' },
 ];
 
 let currentTrackIndex = -1;
@@ -796,20 +796,7 @@ function loadTrack(index) {
     document.getElementById('musicTitle').textContent = track.title;
     document.getElementById('musicCredit').textContent = track.credit;
 
-    console.log(`🎵 Cargado: ${track.title}`);
-    console.log(`   Ruta: ${fullPath}`);
-    console.log(`   Audio element:`, audio);
-    console.log(`   audio.src: ${audio.src}`);
-    console.log(`   audio.readyState: ${audio.readyState}`);
-    console.log(`   audio.error:`, audio.error);
-
-    // Event listeners para debug
-    audio.addEventListener('loadstart', () => console.log('🎵 loadstart'));
-    audio.addEventListener('loadeddata', () => console.log('🎵 loadeddata - listo para reproducir'));
-    audio.addEventListener('canplay', () => console.log('🎵 canplay'));
-    audio.addEventListener('error', (e) => console.error('🎵 ERROR:', audio.error, e));
-    audio.addEventListener('waiting', () => console.log('🎵 waiting...'));
-    audio.addEventListener('playing', () => console.log('🎵 PLAYING!'));
+    console.log(`🎵 Cargado: ${track.title} — ${track.credit}`);
 }
 
 function playTrack() {
