@@ -1579,12 +1579,12 @@ body {
 
 .timer-bar {
     width: 100%;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 5px;
+    height: 12px;
+    background: rgba(229, 26, 26, 0.3);
+    border-radius: 6px;
     overflow: hidden;
     margin-bottom: var(--space-xs);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(229, 26, 26, 0.4);
 }
 
 .timer-bar::before {
@@ -1593,15 +1593,16 @@ body {
     top: 0;
     left: 0;
     height: 100%;
-    background: linear-gradient(90deg, var(--lol-gold-500) 0%, var(--lol-gold-400) 100%);
+    background: linear-gradient(90deg, var(--lol-red-500) 0%, var(--lol-red-400) 100%);
     width: 100%;
-    border-radius: 5px;
+    border-radius: 6px;
     transition: width 0.1s linear, background-color 0.3s ease;
+    box-shadow: 0 0 10px rgba(229, 26, 26, 0.5);
 }
 
 .timer-bar.warning::before {
-    background: var(--lol-red-500);
-    animation: timerPulse 0.4s ease-in-out infinite;
+    background: var(--lol-red-400);
+    animation: timerPulse 0.3s ease-in-out infinite;
 }
 
 .timer-text {

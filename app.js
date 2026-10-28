@@ -1137,6 +1137,7 @@ const TestState = {
     totalRounds: TEST_ROUNDS.length,
     timer: null,
     timeLeft: 0,
+    timeLimit: 20,  // ← Guardar el límite de tiempo de la ronda actual
     isAnswering: false,
     isGameOver: false
 };
@@ -1217,6 +1218,7 @@ function startTimer(seconds) {
     stopTimer();
 
     TestState.timeLeft = seconds;
+    TestState.timeLimit = seconds;  // Guardar el límite para calcular el porcentaje correctamente
     updateTimerDisplay();
 
     TestDOM.timerBar.classList.remove('warning');
@@ -1244,7 +1246,7 @@ function stopTimer() {
 }
 
 function updateTimerDisplay() {
-    const percentage = (TestState.timeLeft / 20) * 100; // Usar 20 como referencia base, o calcular dinámico
+    const percentage = TestState.timeLimit > 0 ? (TestState.timeLeft / TestState.timeLimit) * 100 : 0;
     TestDOM.timerBar.style.width = `${Math.max(0, percentage)}%`;
     TestDOM.timerText.textContent = `${TestState.timeLeft}s`;
 }
