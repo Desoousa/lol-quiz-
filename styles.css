@@ -1519,14 +1519,15 @@ body {
     text-shadow: 0 0 20px rgba(229, 26, 26, 0.5);
     margin-bottom: var(--space-xl);
     text-align: center;
-    animation: titleGlitch 3s ease-in-out infinite;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 @keyframes titleGlitch {
-    0%, 90%, 100% { opacity: 1; }
-    92% { opacity: 0.5; transform: translateX(-2px); }
-    94% { opacity: 0.8; transform: translateX(2px); }
-    96% { opacity: 1; transform: translateX(0); }
+    0%, 90%, 100% { opacity: 1; transform: none; }
+    92% { opacity: 0.5; transform: none; }
+    94% { opacity: 0.8; transform: none; }
+    96% { opacity: 1; transform: none; }
 }
 
 .test-silhouette-container {
@@ -1570,11 +1571,12 @@ body {
 }
 
 .test-timer {
-    position: absolute;
-    top: -55px;
+    position: relative;
+    top: auto;
     width: 100%;
     text-align: center;
     z-index: 10;
+    margin-bottom: var(--space-xs);
 }
 
 .timer-bar {
