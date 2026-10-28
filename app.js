@@ -650,7 +650,8 @@ function startMode(mode) {
     showToast(messages[mode].text, messages[mode].type);
 
     setTimeout(() => {
-        navigateToTest(1);
+        initTestSystem();
+        bindTestEvents();
     }, 1500);
 }
 
@@ -1066,3 +1067,353 @@ window.LoLTests = {
     champions: CHAMPIONS,
     trollChampions: TROLL_CHAMPIONS
 };
+
+// ========================================
+// SISTEMA DE PRUEBAS: ADIVINA LA SILUETA
+// ========================================
+
+// Configuración de rondas (campeón, archivo silueta, pista opcional)
+// El usuario puede editar las rutas de las imágenes aquí
+const TEST_ROUNDS = [
+    {
+        id: 1,
+        champion: 'Ahri',
+        image: 'siluetas/AHRI 1_silhouette.png',   // ← Ruta de tu silueta de Ahri
+        difficulty: 'Ultra fácil',
+        timeLimit: 20,
+        hint: null,  // Sin pista en ronda 1
+        trollReveal: false
+    },
+    {
+        id: 2,
+        champion: 'Riven',
+        image: 'siluetas/riven_silhouette.png',    // ← Ruta de tu silueta de Riven
+        difficulty: 'Ultra fácil',
+        timeLimit: 20,
+        hint: null,  // Sin pista en ronda 2
+        trollReveal: false
+    },
+    {
+        id: 3,
+        champion: 'Jinx',
+        image: 'siluetas/jinx_silhouette.png',     // ← Pon aquí tu silueta de Jinx
+        difficulty: 'Fácil',
+        timeLimit: 20,
+        hint: null,
+        trollReveal: false
+    },
+    {
+        id: 4,
+        champion: 'Yasuo',
+        image: 'siluetas/yasuo_silhouette.png',    // ← Pon aquí tu silueta de Yasuo
+        difficulty: 'Media',
+        timeLimit: 15,
+        hint: 'Empieza por Y y maneja el viento',
+        trollReveal: false
+    },
+    {
+        id: 5,
+        champion: 'Teemo',
+        image: 'siluetas/teemo_silhouette.png',    // ← Twist troll: ¡no es un campeón real!
+        difficulty: 'Difícil',
+        timeLimit: 10,
+        hint: '🍄 El explorador más odiado...',
+        trollReveal: true  // En modo Advertencia se revela como troll
+    }
+];
+
+// Estado del sistema de pruebas
+const TestState = {
+    currentRound: 0,
+    score: 0,
+    totalRounds: TEST_ROUNDS.length,
+    timer: null,
+    timeLeft: 0,
+    isAnswering: false,
+    isGameOver: false
+};
+
+// Elementos DOM del test
+const TestDOM = {
+    testScreen: document.getElementById('testScreen'),
+    testRound: document.getElementById('testRound'),
+    testMode: document.getElementById('testMode'),
+    testTitle: document.getElementById('testTitle'),
+    bgSilhouette: document.getElementById('bgSilhouette'),
+    timerBar: document.getElementById('timerBar'),
+    timerText: document.getElementById('timerText'),
+    testAnswer: document.getElementById('testAnswer'),
+    btnSubmit: document.getElementById('btnSubmit'),
+    btnBack: document.getElementById('btnBackToMenu'),
+    btnHint: document.getElementById('btnHint'),
+    testFeedback: document.getElementById('testFeedback'),
+    silhouetteWrapper: document.getElementById('silhouetteWrapper')
+};
+
+// Inicializar el sistema de pruebas (llamar desde startMode o botón Jugar)
+function initTestSystem() {
+    // Ocultar menú y mostrar pantalla de prueba
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) mainContent.style.display = 'none';
+
+    TestDOM.testScreen.classList.add('visible');
+
+    // Resetear estado
+    TestState.currentRound = 0;
+    TestState.score = 0;
+    TestState.isGameOver = false;
+
+    // Cargar primera ronda
+    loadRound(0);
+
+    console.log('%c🎮 Sistema de pruebas iniciado', 'color: #ffc400; font-weight: bold;');
+}
+
+// Cargar una ronda específica
+function loadRound(roundIndex) {
+    if (roundIndex >= TEST_ROUNDS.length) {
+        showTestResults();
+        return;
+    }
+
+    TestState.isAnswering = false;
+    TestState.isGameOver = false;
+
+    const round = TEST_ROUNDS[roundIndex];
+
+    // Actualizar UI
+    TestDOM.testRound.textContent = `PRUEBA ${roundIndex + 1}/${TEST_ROUNDS.length}`;
+    TestDOM.testTitle.textContent = 'ADIVINA LA SILUETA CABRONA';
+    TestDOM.testMode.textContent = `Modo: ${GameState.mode === 'warning' ? 'ADVERTENCIA' : 'INVOCADOR'}`;
+
+    // Cargar silueta (negra por defecto)
+    TestDOM.bgSilhouette.src = round.image;
+    TestDOM.bgSilhouette.classList.remove('revealed');
+    TestDOM.bgSilhouette.style.filter = 'brightness(0) saturate(0)';
+
+    // Resetear input y feedback
+    TestDOM.testAnswer.value = '';
+    TestDOM.testAnswer.disabled = false;
+    TestDOM.btnSubmit.disabled = false;
+    TestDOM.testFeedback.style.display = 'none';
+    TestDOM.btnHint.style.display = round.hint ? 'block' : 'none';
+
+    // Iniciar temporizador
+    startTimer(round.timeLimit);
+
+    console.log(`🎯 Ronda ${roundIndex + 1}: ${round.champion} (${round.difficulty}) - ${round.timeLimit}s`);
+}
+
+// Temporizador con sonido de reloj bomba
+function startTimer(seconds) {
+    stopTimer();
+
+    TestState.timeLeft = seconds;
+    updateTimerDisplay();
+
+    TestDOM.timerBar.classList.remove('warning');
+
+    TestState.timer = setInterval(() => {
+        TestState.timeLeft--;
+        updateTimerDisplay();
+
+        if (TestState.timeLeft <= 5) {
+            TestDOM.timerBar.classList.add('warning');
+        }
+
+        if (TestState.timeLeft <= 0) {
+            stopTimer();
+            handleTimeout();
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    if (TestState.timer) {
+        clearInterval(TestState.timer);
+        TestState.timer = null;
+    }
+}
+
+function updateTimerDisplay() {
+    const percentage = (TestState.timeLeft / 20) * 100; // Usar 20 como referencia base, o calcular dinámico
+    TestDOM.timerBar.style.width = `${Math.max(0, percentage)}%`;
+    TestDOM.timerText.textContent = `${TestState.timeLeft}s`;
+}
+
+// Sonido del reloj bomba (usando Web Audio API)
+function playBombTick() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(100, ctx.currentTime);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
+    } catch (e) {
+        console.log('🔊 Sonido no disponible');
+    }
+}
+
+function playBombExplosion() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+    } catch (e) {
+        console.log('🔊 Sonido no disponible');
+    }
+}
+
+// Manejar timeout
+function handleTimeout() {
+    TestState.isAnswering = true;
+    showFeedback(`⏰ Tiempo agotado. El campeón era: ${TEST_ROUNDS[TestState.currentRound].champion}`, 'wrong');
+    TestDOM.bgSilhouette.classList.add('revealed');
+
+    setTimeout(() => {
+        TestState.currentRound++;
+        loadRound(TestState.currentRound);
+    }, 2000);
+}
+
+// Manejar envío de respuesta
+function handleSubmitAnswer() {
+    if (TestState.isAnswering || TestState.isGameOver) return;
+
+    const userAnswer = TestDOM.testAnswer.value.trim().toLowerCase();
+    const currentRound = TEST_ROUNDS[TestState.currentRound];
+    const correctAnswer = currentRound.champion.toLowerCase();
+
+    stopTimer();
+
+    if (userAnswer === correctAnswer) {
+        // Acierto
+        TestState.score++;
+        TestState.isAnswering = true;
+        showFeedback(`✅ ¡Correcto! Es ${currentRound.champion}`, 'correct');
+        TestDOM.bgSilhouette.classList.add('revealed');
+
+        setTimeout(() => {
+            TestState.currentRound++;
+            loadRound(TestState.currentRound);
+        }, 2000);
+    } else {
+        // Fallo
+        TestState.isAnswering = true;
+        showFeedback(`❌ Incorrecto. Era ${currentRound.champion}`, 'wrong');
+        TestDOM.bgSilhouette.classList.add('revealed');
+
+        setTimeout(() => {
+            TestState.currentRound++;
+            loadRound(TestState.currentRound);
+        }, 2500);
+    }
+}
+
+// Mostrar feedback visual
+function showFeedback(message, type) {
+    TestDOM.testFeedback.textContent = message;
+    TestDOM.testFeedback.className = `test-feedback ${type}`;
+    TestDOM.testFeedback.style.display = 'block';
+
+    TestDOM.testAnswer.disabled = true;
+    TestDOM.btnSubmit.disabled = true;
+}
+
+// Mostrar resultados finales
+function showTestResults() {
+    TestState.isGameOver = true;
+    stopTimer();
+
+    const percentage = Math.round((TestState.score / TEST_ROUNDS.length) * 100);
+    let resultMessage = '';
+    let resultType = 'correct';
+
+    if (TestState.score === TEST_ROUNDS.length) {
+        resultMessage = GameState.mode === 'warning'
+            ? '🃏 ¡Caos absoluto! Dominas el trolleo.'
+            : '🏆 ¡Invocador experto! Conoces a todos los campeones.';
+    } else if (TestState.score >= TEST_ROUNDS.length / 2) {
+        resultMessage = GameState.mode === 'warning'
+            ? '🃏 No está mal para ser un caos.'
+            : '⚔️ Buen conocimiento, pero puedes mejorar.';
+    } else {
+        resultMessage = GameState.mode === 'warning'
+            ? '🃏 El caos te ha devorado...'
+            : '❌ Necesitas repasar tus campeones.';
+    }
+
+    TestDOM.testScreen.innerHTML = `
+        <div style="text-align: center; max-width: 400px;">
+            <h2 style="color: var(--lol-gold-500); font-family: var(--font-display); text-transform: uppercase; margin-bottom: var(--space-lg);">RESULTADOS</h2>
+            <div style="font-size: 3rem; font-weight: 700; color: var(--lol-gold-500); margin-bottom: var(--space-md);">${TestState.score} / ${TEST_ROUNDS.length}</div>
+            <p style="color: var(--lol-blue-200); margin-bottom: var(--space-xl);">${resultMessage}</p>
+            <button class="btn-submit" onclick="location.reload()" style="width: auto; padding: var(--space-md) var(--space-xl);">VOLVER AL MENÚ</button>
+        </div>
+    `;
+
+    console.log(`🏁 Prueba finalizada: ${TestState.score}/${TEST_ROUNDS.length} (${percentage}%)`);
+}
+
+// Pista: mostrar una letra del campeón
+function showHint() {
+    const round = TEST_ROUNDS[TestState.currentRound];
+    if (!round.hint) return;
+
+    const currentAnswer = TestDOM.testAnswer.value.trim();
+    if (!currentAnswer) {
+        // Insertar primera letra como pista
+        const firstLetter = round.champion.charAt(0);
+        TestDOM.testAnswer.value = firstLetter;
+        showToast(`💡 Pista: ${round.hint}`, 'serious', 3000);
+    } else {
+        showToast(`💡 Pista: ${round.hint}`, 'serious', 3000);
+    }
+}
+
+// Vincular eventos del test
+function bindTestEvents() {
+    if (!TestDOM.btnSubmit) return;
+
+    TestDOM.btnSubmit.addEventListener('click', handleSubmitAnswer);
+
+    TestDOM.testAnswer.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmitAnswer();
+        }
+    });
+
+    TestDOM.btnBack.addEventListener('click', () => {
+        stopTimer();
+        TestDOM.testScreen.classList.remove('visible');
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) mainContent.style.display = 'flex';
+        TestDOM.testScreen.innerHTML = ''; // Limpiar contenido de resultados si los hay
+        // Volver a crear el HTML original del test screen (necesitaría recargar o guardar el HTML original)
+        // Por simplicidad, recargar la página
+        location.reload();
+    });
+
+    TestDOM.btnHint.addEventListener('click', showHint);
+}
+
+// Exportar para debugging
+window.LoLTests.testState = TestState;
+window.LoLTests.initTestSystem = initTestSystem;
+window.LoLTests.loadRound = loadRound;

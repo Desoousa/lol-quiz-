@@ -133,6 +133,39 @@
     <!-- Toast/Notificación para feedback -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Pantalla de prueba: Adivina la Silueta -->
+    <section class="test-screen" id="testScreen" aria-hidden="true">
+        <div class="test-header">
+            <button class="btn-back" id="btnBackToMenu" aria-label="Volver al menú">← Menú</button>
+            <div class="test-info">
+                <span class="test-round" id="testRound">PRUEBA 1/5</span>
+                <span class="test-mode" id="testMode">Modo: INVOCADOR</span>
+            </div>
+        </div>
+
+        <h2 class="test-title" id="testTitle">ADIVINA LA SILUETA CABRONA</h2>
+
+        <div class="test-silhouette-container">
+            <div class="silhouette-wrapper" id="silhouetteWrapper">
+                <img class="bg-silhouette" id="bgSilhouette" src="" alt="Silueta del campeón" aria-hidden="true">
+            </div>
+            <div class="test-timer" id="testTimer">
+                <div class="timer-bar" id="timerBar"></div>
+                <span class="timer-text" id="timerText">20s</span>
+            </div>
+        </div>
+
+        <div class="test-input-container">
+            <label for="testAnswer" class="test-label">Escribe el nombre del campeón:</label>
+            <input type="text" id="testAnswer" class="test-input" placeholder="Ej: Ahri" maxlength="30">
+            <button class="btn-submit" id="btnSubmit" aria-label="Enviar respuesta">ENVIAR RESPUESTA</button>
+        </div>
+
+        <button class="btn-hint" id="btnHint" aria-label="Ver pista" style="display:none;">💡 Pista</button>
+
+        <div class="test-feedback" id="testFeedback" style="display:none;"></div>
+    </section>
+
     <!-- Reproductor de música de fondo -->
     <audio id="bgMusic" preload="metadata" loop></audio>
 
