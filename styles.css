@@ -1441,6 +1441,117 @@ body {
     .entry-title { font-size: 2rem; }
 }
 
+/* Selector de dificultad */
+.difficulty-selector {
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+    animation: fadeInUp 0.6s var(--transition-slow) both;
+}
+
+.difficulty-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--lol-gold-500);
+    text-shadow: 0 0 20px rgba(255, 196, 0, 0.3);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+}
+
+.difficulty-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.difficulty-btn {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    padding: var(--space-xl) var(--space-md);
+    border-radius: var(--radius-lg);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    overflow: hidden;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.difficulty-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+}
+
+.difficulty-btn.btn-facil {
+    border-color: var(--lol-gold-500);
+    background: linear-gradient(145deg, rgba(255, 196, 0, 0.1) 0%, rgba(255, 196, 0, 0.05) 100%);
+    color: var(--lol-gold-300);
+}
+
+.difficulty-btn.btn-facil:hover {
+    background: linear-gradient(145deg, rgba(255, 196, 0, 0.2) 0%, rgba(255, 196, 0, 0.1) 100%);
+    box-shadow: var(--shadow-glow-gold);
+}
+
+.difficulty-btn.btn-medio {
+    border-color: var(--lol-blue-500);
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+    color: var(--lol-blue-300);
+}
+
+.difficulty-btn.btn-medio:hover {
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+}
+
+.difficulty-btn.btn-dificil {
+    border-color: var(--lol-orange-500, #f59e0b);
+    background: linear-gradient(145deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+    color: #fbbf24;
+}
+
+.difficulty-btn.btn-dificil:hover {
+    background: linear-gradient(145deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+}
+
+.difficulty-btn.btn-imposible {
+    border-color: var(--lol-red-500);
+    background: linear-gradient(145deg, rgba(229, 26, 26, 0.1) 0%, rgba(229, 26, 26, 0.05) 100%);
+    color: var(--lol-red-300);
+}
+
+.difficulty-btn.btn-imposible:hover {
+    background: linear-gradient(145deg, rgba(229, 26, 26, 0.2) 0%, rgba(229, 26, 26, 0.1) 100%);
+    box-shadow: var(--shadow-glow-red);
+}
+
+.diff-name {
+    font-family: var(--font-ui);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-xs);
+}
+
+.diff-info {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
 /* ========================================
    PANTALLA DE PRUEBA: ADIVINA LA SILUETA
    ======================================== */

@@ -381,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initChampionSilhouettes();
     initParticles();
     bindEvents();
+    bindDifficultyEvents();
     initEntranceAnimations();
     initBackgroundMusic();
     console.log('%c🎮 Pruebas del Invocador cargado', 'color: #ffc400; font-size: 14px; font-weight: bold;');
@@ -590,7 +591,11 @@ function createParticle(types) {
 // EVENTOS
 // ========================================
 function bindEvents() {
-    DOM.btnJugar.addEventListener('click', () => startMode('serious'));
+    DOM.btnJugar.addEventListener('click', () => {
+    DOM.difficultySelector.style.display = 'block';
+    DOM.btnJugar.style.display = 'none';
+    DOM.btnAdvertencia.style.display = 'none';
+});
     DOM.btnAdvertencia.addEventListener('click', () => openWarningModal());
 
     DOM.modalCancel.addEventListener('click', () => closeWarningModal());
@@ -631,7 +636,7 @@ function closeWarningModal() {
 // ========================================
 // INICIO DE MODOS
 // ========================================
-function startMode(mode) {
+function startMode(mode, difficulty = 'facil') {
     GameState.mode = mode;
     GameState.currentTest = 0;
     GameState.score[mode] = 0;
@@ -650,7 +655,7 @@ function startMode(mode) {
     showToast(messages[mode].text, messages[mode].type);
 
     setTimeout(() => {
-        initTestSystem();
+        initTestSystem(difficulty);
         bindTestEvents();
     }, 1500);
 }
@@ -1080,64 +1085,185 @@ window.LoLTests = {
 // SISTEMA DE PRUEBAS: ADIVINA LA SILUETA
 // ========================================
 
-// Configuración de rondas (campeón, archivo silueta, pista opcional)
-// El usuario puede editar las rutas de las imágenes aquí
-const TEST_ROUNDS = [
-    {
-        id: 1,
-        champion: 'Ahri',
-        image: 'siluetas/ultra facil/AHRI 1_silhouette (1).png',   // ← Silueta de Ahri (ronda 1)
-        difficulty: 'Ultra fácil',
-        timeLimit: 20,
-        hint: null,  // Sin pista en ronda 1
-        trollReveal: false
-    },
-    {
-        id: 2,
-        champion: 'Riven',
-        image: 'siluetas/ultra facil 2/riven_silhouette (2).png',    // ← Silueta de Riven (ronda 2)
-        difficulty: 'Ultra fácil',
-        timeLimit: 20,
-        hint: null,  // Sin pista en ronda 2
-        trollReveal: false
-    },
-    {
-        id: 3,
-        champion: 'Jinx',
-        image: 'siluetas/jinx_silhouette.png',     // ← Pon aquí tu silueta de Jinx
-        difficulty: 'Fácil',
-        timeLimit: 20,
-        hint: null,
-        trollReveal: false
-    },
-    {
-        id: 4,
-        champion: 'Yasuo',
-        image: 'siluetas/yasuo_silhouette.png',    // ← Pon aquí tu silueta de Yasuo
-        difficulty: 'Media',
-        timeLimit: 15,
-        hint: 'Empieza por Y y maneja el viento',
-        trollReveal: false
-    },
-    {
-        id: 5,
-        champion: 'Teemo',
-        image: 'siluetas/teemo_silhouette.png',    // ← Twist troll: ¡no es un campeón real!
-        difficulty: 'Difícil',
-        timeLimit: 10,
-        hint: '🍄 El explorador más odiado...',
-        trollReveal: true  // En modo Advertencia se revela como troll
-    }
-];
+// ========================================
+// SISTEMA DE PRUEBAS: ADIVINA LA SILUETA (4 MODOS DE DIFICULTAD)
+// ========================================
+
+// Configuración de rondas por modo de dificultad
+// Las rutas apuntan a las carpetas reales de siluetas
+const TEST_ROUNDS_BY_DIFFICULTY = {
+    facil: [
+        {
+            id: 1,
+            champion: 'Ahri',
+            image: 'siluetas/ultra facil/AHRI 1_silhouette (1).png',
+            difficulty: 'Fácil',
+            timeLimit: 20,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 2,
+            champion: 'Riven',
+            image: 'siluetas/ultra facil 2/riven_silhouette (2).png',
+            difficulty: 'Fácil',
+            timeLimit: 20,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 3,
+            champion: '157901de17b8e5f68d0d91b63252c62b',
+            image: 'siluetas/facil 1/157901de17b8e5f68d0d91b63252c62b_silhouette (1).png',
+            difficulty: 'Fácil',
+            timeLimit: 20,
+            hint: null,
+            trollReveal: false
+        }
+    ],
+    medio: [
+        {
+            id: 1,
+            champion: 'images',
+            image: 'siluetas/facil 2/images_silhouette (2).png',
+            difficulty: 'Medio',
+            timeLimit: null,  // Sin tiempo
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 2,
+            champion: '500_333',
+            image: 'siluetas/medio 1/500_333_silhouette (1).png',
+            difficulty: 'Medio',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 3,
+            champion: 'coven-akali',
+            image: 'siluetas/medio 2/coven-akali-splash_silhouette (2).png',
+            difficulty: 'Medio',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 4,
+            champion: 'coven-akali-alt',
+            image: 'siluetas/medio 2/coven-akali-splash_silhouette (3).png',
+            difficulty: 'Medio',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        }
+    ],
+    dificil: [
+        {
+            id: 1,
+            champion: 'Qiyana',
+            image: 'siluetas/dificil 2/Qiyana_40_silhouette (1).png',
+            difficulty: 'Difícil',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 2,
+            champion: 'e00782e7b3be9e6c4a8c8781d14103f1',
+            image: 'siluetas/dificl 1/e00782e7b3be9e6c4a8c8781d14103f1_silhouette (1).png',
+            difficulty: 'Difícil',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 3,
+            champion: 'Spirit Blossom Evelynn',
+            image: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (1).png',
+            difficulty: 'Difícil',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 4,
+            champion: 'Spirit Blossom Evelynn 2',
+            image: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (2).png',
+            difficulty: 'Difícil',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 5,
+            champion: 'Spirit Blossom Evelynn 3',
+            image: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (3).png',
+            difficulty: 'Difícil',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        }
+    ],
+    imposible: [
+        {
+            id: 1,
+            champion: 'Braum',
+            image: 'siluetas/imposible 1/braum_silhouette (1).png',
+            difficulty: 'Imposible',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 2,
+            champion: 'Braum 2',
+            image: 'siluetas/imposible 1/braum_silhouette (2).png',
+            difficulty: 'Imposible',
+            timeLimit: null,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 3,
+            champion: 'Braum 3',
+            image: 'siluetas/imposible 1/braum_silhouette.png',
+            difficulty: 'Imposible',
+            timeLimit: null,
+            hint: null,
+            trollReveal: true
+        },
+        {
+            id: 4,
+            champion: 'Qiyana 2',
+            image: 'siluetas/dificil 2/Qiyana_40_silhouette (2).png',
+            difficulty: 'Imposible',
+            timeLimit: null,
+            hint: null,
+            trollReveal: true
+        },
+        {
+            id: 5,
+            champion: 'Qiyana 3',
+            image: 'siluetas/dificil 2/Qiyana_40_silhouette.png',
+            difficulty: 'Imposible',
+            timeLimit: null,
+            hint: null,
+            trollReveal: true
+        }
+    ]
+};
 
 // Estado del sistema de pruebas
 const TestState = {
     currentRound: 0,
     score: 0,
-    totalRounds: TEST_ROUNDS.length,
+    totalRounds: 0,
     timer: null,
     timeLeft: 0,
-    timeLimit: 20,  // ← Guardar el límite de tiempo de la ronda actual
+    timeLimit: 20,
+    difficulty: 'facil',
     isAnswering: false,
     isGameOver: false
 };
@@ -1156,11 +1282,17 @@ const TestDOM = {
     btnBack: document.getElementById('btnBackToMenu'),
     btnHint: document.getElementById('btnHint'),
     testFeedback: document.getElementById('testFeedback'),
-    silhouetteWrapper: document.getElementById('silhouetteWrapper')
+    silhouetteWrapper: document.getElementById('silhouetteWrapper'),
+    difficultySelector: document.getElementById('difficultySelector'),
+    btnDificultadFacil: document.getElementById('btnDificultadFacil'),
+    btnDificultadMedio: document.getElementById('btnDificultadMedio'),
+    btnDificultadDificil: document.getElementById('btnDificultadDificil'),
+    btnDificultadImposible: document.getElementById('btnDificultadImposible'),
+    btnVolverMenu: document.getElementById('btnVolverMenu')
 };
 
-// Inicializar el sistema de pruebas (llamar desde startMode o botón Jugar)
-function initTestSystem() {
+// Inicializar el sistema de pruebas con una dificultad específica
+function initTestSystem(difficulty = 'facil') {
     // Ocultar menú y mostrar pantalla de prueba
     const mainContent = document.querySelector('.main-content');
     if (mainContent) mainContent.style.display = 'none';
@@ -1170,17 +1302,22 @@ function initTestSystem() {
     // Resetear estado
     TestState.currentRound = 0;
     TestState.score = 0;
+    TestState.difficulty = difficulty;
+    const rounds = TEST_ROUNDS_BY_DIFFICULTY[difficulty] || TEST_ROUNDS_BY_DIFFICULTY.facil;
+    TestState.totalRounds = rounds.length;
     TestState.isGameOver = false;
 
     // Cargar primera ronda
     loadRound(0);
 
-    console.log('%c🎮 Sistema de pruebas iniciado', 'color: #ffc400; font-weight: bold;');
+    console.log('%c🎮 Sistema de pruebas iniciado - Modo: ' + difficulty.toUpperCase(), 'color: #ffc400; font-weight: bold;');
 }
 
 // Cargar una ronda específica
 function loadRound(roundIndex) {
-    if (roundIndex >= TEST_ROUNDS.length) {
+    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty] || TEST_ROUNDS_BY_DIFFICULTY.facil;
+
+    if (roundIndex >= rounds.length) {
         showTestResults();
         return;
     }
@@ -1188,37 +1325,45 @@ function loadRound(roundIndex) {
     TestState.isAnswering = false;
     TestState.isGameOver = false;
 
-    const round = TEST_ROUNDS[roundIndex];
+    const round = rounds[roundIndex];
 
     // Actualizar UI
-    TestDOM.testRound.textContent = `PRUEBA ${roundIndex + 1}/${TEST_ROUNDS.length}`;
+    TestDOM.testRound.textContent = `PRUEBA ${roundIndex + 1}/${rounds.length}`;
     TestDOM.testTitle.textContent = 'ADIVINA LA SILUETA CABRONA';
-    TestDOM.testMode.textContent = `Modo: ${GameState.mode === 'warning' ? 'ADVERTENCIA' : 'INVOCADOR'}`;
+    TestDOM.testMode.textContent = `Modo: ${GameState.mode === 'warning' ? 'ADVERTENCIA' : 'INVOCADOR'} | ${round.difficulty}`;
 
-    // Cargar silueta (negra por defecto)
+    // Cargar silueta
     TestDOM.bgSilhouette.src = round.image;
     TestDOM.bgSilhouette.classList.remove('revealed');
-    TestDOM.bgSilhouette.style.filter = 'brightness(0) saturate(0)';
 
     // Resetear input y feedback
     TestDOM.testAnswer.value = '';
     TestDOM.testAnswer.disabled = false;
     TestDOM.btnSubmit.disabled = false;
     TestDOM.testFeedback.style.display = 'none';
-    TestDOM.btnHint.style.display = round.hint ? 'block' : 'none';
 
-    // Iniciar temporizador
-    startTimer(round.timeLimit);
+    // Mostrar/ocultar botón de pista según modo
+    const hasHint = round.hint && TestState.difficulty !== 'facil';
+    TestDOM.btnHint.style.display = hasHint ? 'block' : 'none';
 
-    console.log(`🎯 Ronda ${roundIndex + 1}: ${round.champion} (${round.difficulty}) - ${round.timeLimit}s`);
+    // Iniciar temporizador solo en modo fácil
+    if (round.timeLimit && round.timeLimit > 0) {
+        startTimer(round.timeLimit);
+    } else {
+        stopTimer();
+        TestDOM.timerBar.style.width = '100%';
+        TestDOM.timerText.textContent = '--:--';
+    }
+
+    console.log(`🎯 Ronda ${roundIndex + 1}: ${round.champion} (${round.difficulty})`);
 }
 
-// Temporizador con sonido de reloj bomba
+// Temporizador solo para modo fácil
 function startTimer(seconds) {
     stopTimer();
 
     TestState.timeLeft = seconds;
-    TestState.timeLimit = seconds;  // Guardar el límite para calcular el porcentaje correctamente
+    TestState.timeLimit = seconds;
     updateTimerDisplay();
 
     TestDOM.timerBar.classList.remove('warning');
@@ -1248,7 +1393,7 @@ function stopTimer() {
 function updateTimerDisplay() {
     const percentage = TestState.timeLimit > 0 ? (TestState.timeLeft / TestState.timeLimit) * 100 : 0;
     TestDOM.timerBar.style.width = `${Math.max(0, percentage)}%`;
-    TestDOM.timerText.textContent = `${TestState.timeLeft}s`;
+    TestDOM.timerText.textContent = TestState.timeLimit > 0 ? `${TestState.timeLeft}s` : '--:--';
 }
 
 // Sonido del reloj bomba (usando Web Audio API)
@@ -1289,10 +1434,12 @@ function playBombExplosion() {
     }
 }
 
-// Manejar timeout
+// Manejar timeout (solo modo fácil)
 function handleTimeout() {
     TestState.isAnswering = true;
-    showFeedback(`⏰ Tiempo agotado. El campeón era: ${TEST_ROUNDS[TestState.currentRound].champion}`, 'wrong');
+    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty];
+    const currentRound = rounds[TestState.currentRound];
+    showFeedback(`⏰ Tiempo agotado. El campeón era: ${currentRound.champion}`, 'wrong');
     TestDOM.bgSilhouette.classList.add('revealed');
 
     setTimeout(() => {
@@ -1306,7 +1453,8 @@ function handleSubmitAnswer() {
     if (TestState.isAnswering || TestState.isGameOver) return;
 
     const userAnswer = TestDOM.testAnswer.value.trim().toLowerCase();
-    const currentRound = TEST_ROUNDS[TestState.currentRound];
+    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty];
+    const currentRound = rounds[TestState.currentRound];
     const correctAnswer = currentRound.champion.toLowerCase();
 
     stopTimer();
@@ -1350,15 +1498,16 @@ function showTestResults() {
     TestState.isGameOver = true;
     stopTimer();
 
-    const percentage = Math.round((TestState.score / TEST_ROUNDS.length) * 100);
+    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty];
+    const percentage = Math.round((TestState.score / rounds.length) * 100);
     let resultMessage = '';
     let resultType = 'correct';
 
-    if (TestState.score === TEST_ROUNDS.length) {
+    if (TestState.score === rounds.length) {
         resultMessage = GameState.mode === 'warning'
             ? '🃏 ¡Caos absoluto! Dominas el trolleo.'
             : '🏆 ¡Invocador experto! Conoces a todos los campeones.';
-    } else if (TestState.score >= TEST_ROUNDS.length / 2) {
+    } else if (TestState.score >= rounds.length / 2) {
         resultMessage = GameState.mode === 'warning'
             ? '🃏 No está mal para ser un caos.'
             : '⚔️ Buen conocimiento, pero puedes mejorar.';
@@ -1371,23 +1520,23 @@ function showTestResults() {
     TestDOM.testScreen.innerHTML = `
         <div style="text-align: center; max-width: 400px;">
             <h2 style="color: var(--lol-gold-500); font-family: var(--font-display); text-transform: uppercase; margin-bottom: var(--space-lg);">RESULTADOS</h2>
-            <div style="font-size: 3rem; font-weight: 700; color: var(--lol-gold-500); margin-bottom: var(--space-md);">${TestState.score} / ${TEST_ROUNDS.length}</div>
+            <div style="font-size: 3rem; font-weight: 700; color: var(--lol-gold-500); margin-bottom: var(--space-md);">${TestState.score} / ${rounds.length}</div>
             <p style="color: var(--lol-blue-200); margin-bottom: var(--space-xl);">${resultMessage}</p>
             <button class="btn-submit" onclick="location.reload()" style="width: auto; padding: var(--space-md) var(--space-xl);">VOLVER AL MENÚ</button>
         </div>
     `;
 
-    console.log(`🏁 Prueba finalizada: ${TestState.score}/${TEST_ROUNDS.length} (${percentage}%)`);
+    console.log(`🏁 Prueba finalizada: ${TestState.score}/${rounds.length} (${percentage}%)`);
 }
 
 // Pista: mostrar una letra del campeón
 function showHint() {
-    const round = TEST_ROUNDS[TestState.currentRound];
+    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty];
+    const round = rounds[TestState.currentRound];
     if (!round.hint) return;
 
     const currentAnswer = TestDOM.testAnswer.value.trim();
     if (!currentAnswer) {
-        // Insertar primera letra como pista
         const firstLetter = round.champion.charAt(0);
         TestDOM.testAnswer.value = firstLetter;
         showToast(`💡 Pista: ${round.hint}`, 'serious', 3000);
@@ -1414,13 +1563,40 @@ function bindTestEvents() {
         TestDOM.testScreen.classList.remove('visible');
         const mainContent = document.querySelector('.main-content');
         if (mainContent) mainContent.style.display = 'flex';
-        TestDOM.testScreen.innerHTML = ''; // Limpiar contenido de resultados si los hay
-        // Volver a crear el HTML original del test screen (necesitaría recargar o guardar el HTML original)
-        // Por simplicidad, recargar la página
+        TestDOM.testScreen.innerHTML = '';
         location.reload();
     });
 
     TestDOM.btnHint.addEventListener('click', showHint);
+}
+
+// Seleccionar dificultad y iniciar juego
+function selectDifficulty(difficulty) {
+    TestDOM.difficultySelector.style.display = 'none';
+    startMode(GameState.mode || 'serious', difficulty);
+}
+
+// Vincular eventos de dificultad
+function bindDifficultyEvents() {
+    if (TestDOM.btnDificultadFacil) {
+        TestDOM.btnDificultadFacil.addEventListener('click', () => selectDifficulty('facil'));
+    }
+    if (TestDOM.btnDificultadMedio) {
+        TestDOM.btnDificultadMedio.addEventListener('click', () => selectDifficulty('medio'));
+    }
+    if (TestDOM.btnDificultadDificil) {
+        TestDOM.btnDificultadDificil.addEventListener('click', () => selectDifficulty('dificil'));
+    }
+    if (TestDOM.btnDificultadImposible) {
+        TestDOM.btnDificultadImposible.addEventListener('click', () => selectDifficulty('imposible'));
+    }
+    if (TestDOM.btnVolverMenu) {
+        TestDOM.btnVolverMenu.addEventListener('click', () => {
+            TestDOM.difficultySelector.style.display = 'none';
+            DOM.btnJugar.style.display = '';
+            DOM.btnAdvertencia.style.display = '';
+        });
+    }
 }
 
 // Exportar para debugging
