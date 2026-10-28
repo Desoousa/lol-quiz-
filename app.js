@@ -602,7 +602,7 @@ function bindEvents() {
     DOM.modalCancel.addEventListener('click', () => closeWarningModal());
     DOM.modalConfirm.addEventListener('click', () => {
         closeWarningModal();
-        startMode('warning');
+        // Advertencia NO inicia la prueba de siluetas, solo cierra el modal y vuelve al menú
     });
     DOM.modalBackdrop.addEventListener('click', () => closeWarningModal());
 
