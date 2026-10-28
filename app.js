@@ -1086,7 +1086,7 @@ const TEST_ROUNDS = [
     {
         id: 1,
         champion: 'Ahri',
-        image: 'siluetas/AHRI 1_silhouette.png',   // ← Ruta de tu silueta de Ahri
+        image: 'siluetas/ultra facil/AHRI 1_silhouette (1).png',   // ← Silueta de Ahri (ronda 1)
         difficulty: 'Ultra fácil',
         timeLimit: 20,
         hint: null,  // Sin pista en ronda 1
@@ -1095,7 +1095,7 @@ const TEST_ROUNDS = [
     {
         id: 2,
         champion: 'Riven',
-        image: 'siluetas/riven_silhouette.png',    // ← Ruta de tu silueta de Riven
+        image: 'siluetas/ultra facil 2/riven_silhouette (1).png',    // ← Silueta de Riven (ronda 2)
         difficulty: 'Ultra fácil',
         timeLimit: 20,
         hint: null,  // Sin pista en ronda 2
