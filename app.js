@@ -1095,7 +1095,7 @@ const TEST_ROUNDS = [
     {
         id: 2,
         champion: 'Riven',
-        image: 'siluetas/ultra facil 2/riven_silhouette (1).png',    // ← Silueta de Riven (ronda 2)
+        image: 'siluetas/ultra facil 2/riven_silhouette (2).png',    // ← Silueta de Riven (ronda 2)
         difficulty: 'Ultra fácil',
         timeLimit: 20,
         hint: null,  // Sin pista en ronda 2
