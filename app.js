@@ -592,9 +592,6 @@ function createParticle(types) {
 // ========================================
 function bindEvents() {
     DOM.btnJugar.addEventListener('click', () => {
-    DOM.difficultySelector.style.display = 'none';
-    DOM.btnJugar.style.display = 'none';
-    DOM.btnAdvertencia.style.display = 'none';
     startMode('serious');
 });
     DOM.btnAdvertencia.addEventListener('click', () => openWarningModal());
