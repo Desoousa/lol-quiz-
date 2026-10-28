@@ -1497,6 +1497,11 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: #ffffff;          /* Fondo blanco para que se vean siluetas negras */
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-elevated);
+    border: 3px solid var(--lol-gold-500);
 }
 
 .silhouette-wrapper {
@@ -1506,14 +1511,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #f8f8f8;          /* Fondo interior ligeramente gris */
+    border-radius: var(--radius-lg);
+    padding: var(--space-sm);
 }
 
 .bg-silhouette {
-    max-width: 90%;
-    max-height: 300px;
+    max-width: 85%;
+    max-height: 260px;
     object-fit: contain;
-    filter: brightness(0) saturate(0);
+    filter: brightness(0) saturate(0);  /* Silueta negra */
     transition: filter var(--transition-normal);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
 .bg-silhouette.revealed {
