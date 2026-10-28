@@ -1090,7 +1090,8 @@ window.LoLTests = {
 // ========================================
 
 // Configuración de rondas por modo de dificultad
-// Las rutas apuntan a las carpetas reales de siluetas
+// Una carpeta de siluetas = una ronda
+// Total: 10 carpetas = 10 rondas en todos los modos
 const TEST_ROUNDS_BY_DIFFICULTY = {
     facil: [
         {
@@ -1113,8 +1114,17 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
         },
         {
             id: 3,
-            champion: '157901de17b8e5f68d0d91b63252c62b',
+            champion: 'Campeón 157901',
             image: 'siluetas/facil 1/157901de17b8e5f68d0d91b63252c62b_silhouette (1).png',
+            difficulty: 'Fácil',
+            timeLimit: 20,
+            hint: null,
+            trollReveal: false
+        },
+        {
+            id: 4,
+            champion: 'Images',
+            image: 'siluetas/facil 2/images_silhouette (2).png',
             difficulty: 'Fácil',
             timeLimit: 20,
             hint: null,
@@ -1124,15 +1134,6 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
     medio: [
         {
             id: 1,
-            champion: 'images',
-            image: 'siluetas/facil 2/images_silhouette (2).png',
-            difficulty: 'Medio',
-            timeLimit: null,  // Sin tiempo
-            hint: null,
-            trollReveal: false
-        },
-        {
-            id: 2,
             champion: '500_333',
             image: 'siluetas/medio 1/500_333_silhouette (1).png',
             difficulty: 'Medio',
@@ -1141,18 +1142,9 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
             trollReveal: false
         },
         {
-            id: 3,
-            champion: 'coven-akali',
+            id: 2,
+            champion: 'Coven Akali',
             image: 'siluetas/medio 2/coven-akali-splash_silhouette (2).png',
-            difficulty: 'Medio',
-            timeLimit: null,
-            hint: null,
-            trollReveal: false
-        },
-        {
-            id: 4,
-            champion: 'coven-akali-alt',
-            image: 'siluetas/medio 2/coven-akali-splash_silhouette (3).png',
             difficulty: 'Medio',
             timeLimit: null,
             hint: null,
@@ -1186,24 +1178,6 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
             timeLimit: null,
             hint: null,
             trollReveal: false
-        },
-        {
-            id: 4,
-            champion: 'Spirit Blossom Evelynn 2',
-            image: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (2).png',
-            difficulty: 'Difícil',
-            timeLimit: null,
-            hint: null,
-            trollReveal: false
-        },
-        {
-            id: 5,
-            champion: 'Spirit Blossom Evelynn 3',
-            image: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (3).png',
-            difficulty: 'Difícil',
-            timeLimit: null,
-            hint: null,
-            trollReveal: false
         }
     ],
     imposible: [
@@ -1211,42 +1185,6 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
             id: 1,
             champion: 'Braum',
             image: 'siluetas/imposible 1/braum_silhouette (1).png',
-            difficulty: 'Imposible',
-            timeLimit: null,
-            hint: null,
-            trollReveal: false
-        },
-        {
-            id: 2,
-            champion: 'Braum 2',
-            image: 'siluetas/imposible 1/braum_silhouette (2).png',
-            difficulty: 'Imposible',
-            timeLimit: null,
-            hint: null,
-            trollReveal: false
-        },
-        {
-            id: 3,
-            champion: 'Braum 3',
-            image: 'siluetas/imposible 1/braum_silhouette.png',
-            difficulty: 'Imposible',
-            timeLimit: null,
-            hint: null,
-            trollReveal: true
-        },
-        {
-            id: 4,
-            champion: 'Qiyana 2',
-            image: 'siluetas/dificil 2/Qiyana_40_silhouette (2).png',
-            difficulty: 'Imposible',
-            timeLimit: null,
-            hint: null,
-            trollReveal: true
-        },
-        {
-            id: 5,
-            champion: 'Qiyana 3',
-            image: 'siluetas/dificil 2/Qiyana_40_silhouette.png',
             difficulty: 'Imposible',
             timeLimit: null,
             hint: null,
