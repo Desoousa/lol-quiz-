@@ -1114,7 +1114,7 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
         },
         {
             id: 3,
-            champion: 'Campeón 157901',
+            champion: 'Kaisa',
             image: 'siluetas/facil 1/157901de17b8e5f68d0d91b63252c62b_silhouette (1).png',
             difficulty: 'Fácil',
             timeLimit: 20,
@@ -1123,7 +1123,7 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
         },
         {
             id: 4,
-            champion: 'Images',
+            champion: 'Senna',
             image: 'siluetas/facil 2/images_silhouette (2).png',
             difficulty: 'Fácil',
             timeLimit: 20,
@@ -1134,49 +1134,49 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
     medio: [
         {
             id: 1,
-            champion: '500_333',
+            champion: 'Diana',
             image: 'siluetas/medio 1/500_333_silhouette (1).png',
             difficulty: 'Medio',
             timeLimit: null,
-            hint: null,
+            hint: 'Hija de la luna, portadora de la Espada Lunar, cazadora de los herejes del Sol',
             trollReveal: false
         },
         {
             id: 2,
-            champion: 'Coven Akali',
+            champion: 'Akali',
             image: 'siluetas/medio 2/coven-akali-splash_silhouette (2).png',
             difficulty: 'Medio',
             timeLimit: null,
-            hint: null,
+            hint: 'Puño Sombrío de Kinkou, exiliada, lucha por su propia justicia',
             trollReveal: false
         }
     ],
     dificil: [
         {
             id: 1,
-            champion: 'Qiyana',
-            image: 'siluetas/dificil 2/Qiyana_40_silhouette (1).png',
+            champion: 'Karma',
+            image: 'siluetas/dificl 1/e00782e7b3be9e6c4a8c8781d14103f1_silhouette (1).png',
             difficulty: 'Difícil',
             timeLimit: null,
-            hint: null,
+            hint: 'La Iluminada, encarna las almas de Ionia, busca el equilibrio espiritual',
             trollReveal: false
         },
         {
             id: 2,
-            champion: 'e00782e7b3be9e6c4a8c8781d14103f1',
-            image: 'siluetas/dificl 1/e00782e7b3be9e6c4a8c8781d14103f1_silhouette (1).png',
+            champion: 'Qiyana',
+            image: 'siluetas/dificil 2/Qiyana_40_silhouette (1).png',
             difficulty: 'Difícil',
             timeLimit: null,
-            hint: null,
+            hint: 'Emperatriz de los Elementos de Ixtal, domina los elementos con su arma esmeralda',
             trollReveal: false
         },
         {
             id: 3,
-            champion: 'Spirit Blossom Evelynn',
+            champion: 'Evelynn',
             image: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (1).png',
             difficulty: 'Difícil',
             timeLimit: null,
-            hint: null,
+            hint: 'El Agonía de la Agonía, demonio seductor que se alimenta del sufrimiento ajeno',
             trollReveal: false
         }
     ],
@@ -1187,7 +1187,7 @@ const TEST_ROUNDS_BY_DIFFICULTY = {
             image: 'siluetas/imposible 1/braum_silhouette (1).png',
             difficulty: 'Imposible',
             timeLimit: null,
-            hint: null,
+            hint: 'El Corazón de Freljord, guarda la puerta de Howling Abyss con su escudo de puerta',
             trollReveal: true
         }
     ]
