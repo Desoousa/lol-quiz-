@@ -19,6 +19,7 @@
         .progress-bar { height: 100%; background: #ffc400; width: 0%; transition: width 0.2s; }
         .original-badge { background: #6ba3e0; color: #000; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
         .silhouette-badge { background: #00ffaa; color: #000; padding: 2px 6px; border-radius: 3px; font-size: 10px; }
+        .error-msg { color: #ff5555; font-size: 12px; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -47,18 +48,38 @@
         async function handleFiles(files) {
             const images = Array.from(files).filter(f => f.type.startsWith('image/'));
             for (const file of images) {
-                await processImage(file);
+                try {
+                    await processImage(file);
+                } catch (err) {
+                    console.error('Error procesando archivo:', file.name, err);
+                    const div = document.createElement('div');
+                    div.className = 'item';
+                    div.innerHTML = `
+                        <label><span class="original-badge">Error</span> ${file.name}</label>
+                        <div class="error-msg">No se pudo procesar este archivo</div>
+                    `;
+                    grid.appendChild(div);
+                }
             }
         }
 
         function processImage(file) {
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = e => {
                     const img = new Image();
-                    img.onload = () => createSilhouette(img, file.name);
+                    img.onload = () => {
+                        try {
+                            createSilhouette(img, file.name);
+                            resolve();
+                        } catch (err) {
+                            reject(err);
+                        }
+                    };
+                    img.onerror = () => reject(new Error('No se pudo cargar la imagen'));
                     img.src = e.target.result;
                 };
+                reader.onerror = () => reject(new Error('Error leyendo el archivo'));
                 reader.readAsDataURL(file);
             });
         }
@@ -72,7 +93,7 @@
             // Dibujar original
             ctx.drawImage(img, 0, 0);
 
-            // Convertir a silueta: alpha > 0 → negro, alpha = 0 → transparente
+            // Convertir a silueta: alpha > 0 → negro opaco, alpha = 0 → transparente
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const data = imageData.data;
             for (let i = 0; i < data.length; i += 4) {
@@ -86,20 +107,20 @@
             }
             ctx.putImageData(imageData, 0, 0);
 
+            const dataUrl = canvas.toDataURL('image/png');
+
             // Mostrar en grid
             const div = document.createElement('div');
             div.className = 'item';
             div.innerHTML = `
                 <label><span class="original-badge">Original</span> ${name} (${img.width}x${img.height})</label>
-                <img src="${canvas.toDataURL('image/png')}" alt="Silueta de ${name}">
+                <img src="${dataUrl}" alt="Silueta de ${name}">
                 <span class="silhouette-badge">Silueta lista</span>
                 <div class="progress"><div class="progress-bar" style="width:100%"></div></div>
                 <button class="btn" onclick="downloadSilhouette(this, '${name.replace(/\.[^.]+$/, '')}')">⬇ Descargar PNG</button>
             `;
             grid.appendChild(div);
-            // Guardar canvas en el div para descarga
-            div.dataset.canvas = canvas.toDataURL('image/png');
-            resolve();
+            div.dataset.canvas = dataUrl;
         }
 
         function downloadSilhouette(btn, name) {
