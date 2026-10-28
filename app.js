@@ -1403,6 +1403,11 @@ function handleSubmitAnswer() {
             TestState.secondImageShown = true;
             TestDOM.bgSilhouette.src = currentRound.secondImage;
             showFeedback(`❌ Incorrecto. Segunda oportunidad con pista visual.`, 'wrong');
+            // NO deshabilitar input/botón aquí - permitir segundo intento
+            TestDOM.testAnswer.disabled = false;
+            TestDOM.testAnswer.value = '';
+            TestDOM.testAnswer.focus();
+            TestDOM.btnSubmit.disabled = false;
         } else {
             // Segunda oportunidad fallida o sin segunda imagen
             TestState.isAnswering = true;
