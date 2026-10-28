@@ -1571,18 +1571,20 @@ body {
 
 .test-timer {
     position: absolute;
-    top: -50px;
+    top: -55px;
     width: 100%;
     text-align: center;
+    z-index: 10;
 }
 
 .timer-bar {
     width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 5px;
     overflow: hidden;
     margin-bottom: var(--space-xs);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .timer-bar::before {
@@ -1591,28 +1593,36 @@ body {
     top: 0;
     left: 0;
     height: 100%;
-    background: linear-gradient(90deg, var(--lol-gold-500), var(--lol-red-500));
+    background: linear-gradient(90deg, var(--lol-gold-500) 0%, var(--lol-gold-400) 100%);
     width: 100%;
-    border-radius: 4px;
-    transition: width 1s linear;
+    border-radius: 5px;
+    transition: width 0.1s linear, background-color 0.3s ease;
 }
 
 .timer-bar.warning::before {
     background: var(--lol-red-500);
-    animation: timerPulse 0.5s ease-in-out infinite;
+    animation: timerPulse 0.4s ease-in-out infinite;
+}
+
+.timer-text {
+    font-family: var(--font-ui);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--lol-gold-400);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 15px rgba(255, 196, 0, 0.4);
+    opacity: 1;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.timer-text.warning {
+    color: var(--lol-red-500);
+    text-shadow: 0 0 15px rgba(229, 26, 26, 0.6);
 }
 
 @keyframes timerPulse {
     0%, 100% { opacity: 1; transform: scaleX(1); }
     50% { opacity: 0.7; transform: scaleX(0.95); }
-}
-
-.timer-text {
-    font-family: var(--font-ui);
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--lol-gold-400);
-    letter-spacing: 0.1em;
 }
 
 .test-input-container {
