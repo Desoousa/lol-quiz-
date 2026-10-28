@@ -893,6 +893,46 @@ body {
     to { opacity: 0; transform: translateX(100%); }
 }
 
+/* Botón de mute permanente (siempre visible en todas las pantallas) */
+.btn-mute-permanent {
+    position: fixed;
+    top: var(--space-xl);
+    right: var(--space-xl);
+    z-index: 300;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--lol-void-900) 0%, var(--lol-red-900) 100%);
+    border: 2px solid var(--lol-red-500);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-elevated-red), 0 0 20px rgba(229, 26, 26, 0.2);
+    transition: all var(--transition-normal);
+    overflow: hidden;
+}
+
+.btn-mute-permanent:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-glow-red), var(--shadow-elevated-red);
+}
+
+.btn-mute-permanent svg {
+    width: 26px;
+    height: 26px;
+    color: var(--lol-red-400);
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-mute-permanent.muted .mute-icon-volume {
+    display: none;
+}
+
+.btn-mute-permanent.muted .mute-icon-muted {
+    display: block;
+}
+
 /* ========================================
    REPRODUCTOR DE MÚSICA FLOTANTE
    ======================================== */

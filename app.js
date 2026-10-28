@@ -986,8 +986,10 @@ function updateMuteUI(isMuted) {
     const muteBtn = document.getElementById('musicMute');
     const volumeIcon = muteBtn.querySelector('.volume-icon');
     const muteIcon = muteBtn.querySelector('.mute-icon');
+    const btnMutePermanent = document.getElementById('btnMutePermanent');
 
     if (toggle) toggle.classList.toggle('muted', isMuted);
+    if (btnMutePermanent) btnMutePermanent.classList.toggle('muted', isMuted);
     if (volumeIcon && muteIcon) {
         volumeIcon.style.display = isMuted ? 'none' : 'block';
         muteIcon.style.display = isMuted ? 'block' : 'none';
@@ -1025,6 +1027,12 @@ function initMusicController(audio) {
 
     // Mute
     muteBtn.addEventListener('click', toggleMute);
+
+    // Mute permanente (siempre visible)
+    const btnMutePermanent = document.getElementById('btnMutePermanent');
+    if (btnMutePermanent) {
+        btnMutePermanent.addEventListener('click', toggleMute);
+    }
 
     // Volume slider
     volumeSlider.addEventListener('input', (e) => setVolume(e.target.value));
