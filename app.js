@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initChampionSilhouettes();
     initParticles();
     bindEvents();
-    bindDifficultyEvents();
+    // bindDifficultyEvents eliminado - ahora hay 10 rondas seguidas
     initEntranceAnimations();
     initBackgroundMusic();
     console.log('%c🎮 Pruebas del Invocador cargado', 'color: #ffc400; font-size: 14px; font-weight: bold;');
@@ -592,9 +592,10 @@ function createParticle(types) {
 // ========================================
 function bindEvents() {
     DOM.btnJugar.addEventListener('click', () => {
-    DOM.difficultySelector.style.display = 'block';
+    DOM.difficultySelector.style.display = 'none';
     DOM.btnJugar.style.display = 'none';
     DOM.btnAdvertencia.style.display = 'none';
+    startMode('serious');
 });
     DOM.btnAdvertencia.addEventListener('click', () => openWarningModal());
 
@@ -1086,122 +1087,122 @@ window.LoLTests = {
 // ========================================
 
 // ========================================
-// SISTEMA DE PRUEBAS: ADIVINA LA SILUETA (4 MODOS DE DIFICULTAD)
+// SISTEMA DE PRUEBAS: ADIVINA LA SILUETA (10 RONDAS SEGUIDAS)
 // ========================================
 
-// Configuración de rondas por modo de dificultad
-// Una carpeta de siluetas = una ronda
-// Total: 10 carpetas = 10 rondas en todos los modos
-const TEST_ROUNDS_BY_DIFFICULTY = {
-    facil: [
-        {
-            id: 1,
-            champion: 'Ahri',
-            image: 'siluetas/ultra facil/AHRI 1_silhouette (1).png',
-            difficulty: 'Fácil',
-            timeLimit: 20,
-            hint: null,
-            trollReveal: false
-        },
-        {
-            id: 2,
-            champion: 'Riven',
-            image: 'siluetas/ultra facil 2/riven_silhouette (2).png',
-            difficulty: 'Fácil',
-            timeLimit: 20,
-            hint: null,
-            trollReveal: false
-        },
-        {
-            id: 3,
-            champion: 'Kaisa',
-            image: 'siluetas/facil 1/157901de17b8e5f68d0d91b63252c62b_silhouette (1).png',
-            difficulty: 'Fácil',
-            timeLimit: 20,
-            hint: null,
-            trollReveal: false
-        },
-        {
-            id: 4,
-            champion: 'Senna',
-            image: 'siluetas/facil 2/images_silhouette (2).png',
-            difficulty: 'Fácil',
-            timeLimit: 20,
-            hint: null,
-            trollReveal: false
-        }
-    ],
-    medio: [
-        {
-            id: 1,
-            champion: 'Diana',
-            image: 'siluetas/medio 1/500_333_silhouette (1).png',
-            difficulty: 'Medio',
-            timeLimit: null,
-            hint: 'Hija de la luna, portadora de la Espada Lunar, cazadora de los herejes del Sol',
-            trollReveal: false
-        },
-        {
-            id: 2,
-            champion: 'Akali',
-            image: 'siluetas/medio 2/coven-akali-splash_silhouette (2).png',
-            difficulty: 'Medio',
-            timeLimit: null,
-            hint: 'Puño Sombrío de Kinkou, exiliada, lucha por su propia justicia',
-            trollReveal: false
-        }
-    ],
-    dificil: [
-        {
-            id: 1,
-            champion: 'Karma',
-            image: 'siluetas/dificl 1/e00782e7b3be9e6c4a8c8781d14103f1_silhouette (1).png',
-            difficulty: 'Difícil',
-            timeLimit: null,
-            hint: 'La Iluminada, encarna las almas de Ionia, busca el equilibrio espiritual',
-            trollReveal: false
-        },
-        {
-            id: 2,
-            champion: 'Qiyana',
-            image: 'siluetas/dificil 2/Qiyana_40_silhouette (1).png',
-            difficulty: 'Difícil',
-            timeLimit: null,
-            hint: 'Emperatriz de los Elementos de Ixtal, domina los elementos con su arma esmeralda',
-            trollReveal: false
-        },
-        {
-            id: 3,
-            champion: 'Evelynn',
-            image: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (1).png',
-            difficulty: 'Difícil',
-            timeLimit: null,
-            hint: 'El Agonía de la Agonía, demonio seductor que se alimenta del sufrimiento ajeno',
-            trollReveal: false
-        }
-    ],
-    imposible: [
-        {
-            id: 1,
-            champion: 'Braum',
-            image: 'siluetas/imposible 1/braum_silhouette (1).png',
-            difficulty: 'Imposible',
-            timeLimit: null,
-            hint: 'El Corazón de Freljord, guarda la puerta de Howling Abyss con su escudo de puerta',
-            trollReveal: true
-        }
-    ]
-};
+// Configuración de rondas: 10 rondas seguidas, una por carpeta de siluetas
+const TEST_ROUNDS = [
+    {
+        id: 1,
+        champion: 'Ahri',
+        image: 'siluetas/ultra facil/AHRI 1_silhouette (1).png',
+        secondImage: null,
+        difficulty: 'Fácil',
+        timeLimit: 20,
+        hint: null,
+        trollReveal: false
+    },
+    {
+        id: 2,
+        champion: 'Riven',
+        image: 'siluetas/ultra facil 2/riven_silhouette (2).png',
+        secondImage: null,
+        difficulty: 'Fácil',
+        timeLimit: 20,
+        hint: null,
+        trollReveal: false
+    },
+    {
+        id: 3,
+        champion: 'Kaisa',
+        image: 'siluetas/facil 1/157901de17b8e5f68d0d91b63252c62b_silhouette (1).png',
+        secondImage: 'siluetas/facil 1/157901de17b8e5f68d0d91b63252c62b_silhouette (2).png',
+        difficulty: 'Fácil',
+        timeLimit: 20,
+        hint: null,
+        trollReveal: false
+    },
+    {
+        id: 4,
+        champion: 'Senna',
+        image: 'siluetas/facil 2/images_silhouette (2).png',
+        secondImage: null,
+        difficulty: 'Fácil',
+        timeLimit: 20,
+        hint: null,
+        trollReveal: false
+    },
+    {
+        id: 5,
+        champion: 'Diana',
+        image: 'siluetas/medio 1/500_333_silhouette (1).png',
+        secondImage: 'siluetas/medio 1/500_333_silhouette (2).png',
+        difficulty: 'Medio',
+        timeLimit: null,
+        hint: 'Hija de la luna, portadora de la Espada Lunar, cazadora de los herejes del Sol',
+        trollReveal: false
+    },
+    {
+        id: 6,
+        champion: 'Akali',
+        image: 'siluetas/medio 2/coven-akali-splash_silhouette (2).png',
+        secondImage: 'siluetas/medio 2/coven-akali-splash_silhouette (3).png',
+        difficulty: 'Medio',
+        timeLimit: null,
+        hint: 'Puño Sombrío de Kinkou, exiliada, lucha por su propia justicia',
+        trollReveal: false
+    },
+    {
+        id: 7,
+        champion: 'Karma',
+        image: 'siluetas/dificl 1/e00782e7b3be9e6c4a8c8781d14103f1_silhouette (1).png',
+        secondImage: 'siluetas/dificl 1/e00782e7b3be9e6c4a8c8781d14103f1.jpg',
+        difficulty: 'Difícil',
+        timeLimit: null,
+        hint: 'La Iluminada, encarna las almas de Ionia, busca el equilibrio espiritual',
+        trollReveal: false
+    },
+    {
+        id: 8,
+        champion: 'Qiyana',
+        image: 'siluetas/dificil 2/Qiyana_40_silhouette (1).png',
+        secondImage: 'siluetas/dificil 2/Qiyana_40_silhouette (2).png',
+        difficulty: 'Difícil',
+        timeLimit: null,
+        hint: 'Emperatriz de los Elementos de Ixtal, domina los elementos con su arma esmeralda',
+        trollReveal: false
+    },
+    {
+        id: 9,
+        champion: 'Evelynn',
+        image: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (1).png',
+        secondImage: 'siluetas/dificl 3/Spirit.Blossom.Evelynn.full.4215734_silhouette (2).png',
+        difficulty: 'Difícil',
+        timeLimit: null,
+        hint: 'El Agonía de la Agonía, demonio seductor que se alimenta del sufrimiento ajeno',
+        trollReveal: false
+    },
+    {
+        id: 10,
+        champion: 'Braum',
+        image: 'siluetas/imposible 1/braum_silhouette (1).png',
+        secondImage: 'siluetas/imposible 1/braum_silhouette (2).png',
+        difficulty: 'Imposible',
+        timeLimit: null,
+        hint: 'El Corazón de Freljord, guarda la puerta de Howling Abyss con su escudo de puerta',
+        trollReveal: false
+    }
+];
 
 // Estado del sistema de pruebas
 const TestState = {
     currentRound: 0,
     score: 0,
-    totalRounds: 0,
+    totalRounds: TEST_ROUNDS.length,
     timer: null,
     timeLeft: 0,
     timeLimit: 20,
-    difficulty: 'facil',
+    secondImageShown: false,
     isAnswering: false,
     isGameOver: false
 };
@@ -1220,17 +1221,11 @@ const TestDOM = {
     btnBack: document.getElementById('btnBackToMenu'),
     btnHint: document.getElementById('btnHint'),
     testFeedback: document.getElementById('testFeedback'),
-    silhouetteWrapper: document.getElementById('silhouetteWrapper'),
-    difficultySelector: document.getElementById('difficultySelector'),
-    btnDificultadFacil: document.getElementById('btnDificultadFacil'),
-    btnDificultadMedio: document.getElementById('btnDificultadMedio'),
-    btnDificultadDificil: document.getElementById('btnDificultadDificil'),
-    btnDificultadImposible: document.getElementById('btnDificultadImposible'),
-    btnVolverMenu: document.getElementById('btnVolverMenu')
+    silhouetteWrapper: document.getElementById('silhouetteWrapper')
 };
 
-// Inicializar el sistema de pruebas con una dificultad específica
-function initTestSystem(difficulty = 'facil') {
+// Inicializar el sistema de pruebas (10 rondas seguidas)
+function initTestSystem() {
     // Ocultar menú y mostrar pantalla de prueba
     const mainContent = document.querySelector('.main-content');
     if (mainContent) mainContent.style.display = 'none';
@@ -1240,37 +1235,33 @@ function initTestSystem(difficulty = 'facil') {
     // Resetear estado
     TestState.currentRound = 0;
     TestState.score = 0;
-    TestState.difficulty = difficulty;
-    const rounds = TEST_ROUNDS_BY_DIFFICULTY[difficulty] || TEST_ROUNDS_BY_DIFFICULTY.facil;
-    TestState.totalRounds = rounds.length;
     TestState.isGameOver = false;
 
     // Cargar primera ronda
     loadRound(0);
 
-    console.log('%c🎮 Sistema de pruebas iniciado - Modo: ' + difficulty.toUpperCase(), 'color: #ffc400; font-weight: bold;');
+    console.log('%c🎮 Sistema de pruebas iniciado - 10 rondas seguidas', 'color: #ffc400; font-weight: bold;');
 }
 
 // Cargar una ronda específica
 function loadRound(roundIndex) {
-    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty] || TEST_ROUNDS_BY_DIFFICULTY.facil;
-
-    if (roundIndex >= rounds.length) {
+    if (roundIndex >= TEST_ROUNDS.length) {
         showTestResults();
         return;
     }
 
     TestState.isAnswering = false;
     TestState.isGameOver = false;
+    TestState.secondImageShown = false;
 
-    const round = rounds[roundIndex];
+    const round = TEST_ROUNDS[roundIndex];
 
     // Actualizar UI
-    TestDOM.testRound.textContent = `PRUEBA ${roundIndex + 1}/${rounds.length}`;
+    TestDOM.testRound.textContent = `PRUEBA ${roundIndex + 1}/${TEST_ROUNDS.length}`;
     TestDOM.testTitle.textContent = 'ADIVINA LA SILUETA CABRONA';
     TestDOM.testMode.textContent = `Modo: ${GameState.mode === 'warning' ? 'ADVERTENCIA' : 'INVOCADOR'} | ${round.difficulty}`;
 
-    // Cargar silueta
+    // Cargar silueta (primera imagen)
     TestDOM.bgSilhouette.src = round.image;
     TestDOM.bgSilhouette.classList.remove('revealed');
 
@@ -1280,11 +1271,11 @@ function loadRound(roundIndex) {
     TestDOM.btnSubmit.disabled = false;
     TestDOM.testFeedback.style.display = 'none';
 
-    // Mostrar/ocultar botón de pista según modo
-    const hasHint = round.hint && TestState.difficulty !== 'facil';
+    // Mostrar/ocultar botón de pista (solo rondas 5-10)
+    const hasHint = round.hint && TestState.currentRound >= 4;
     TestDOM.btnHint.style.display = hasHint ? 'block' : 'none';
 
-    // Iniciar temporizador solo en modo fácil
+    // Iniciar temporizador solo en rondas 1-4 (modo fácil con timer)
     if (round.timeLimit && round.timeLimit > 0) {
         startTimer(round.timeLimit);
     } else {
@@ -1296,7 +1287,7 @@ function loadRound(roundIndex) {
     console.log(`🎯 Ronda ${roundIndex + 1}: ${round.champion} (${round.difficulty})`);
 }
 
-// Temporizador solo para modo fácil
+// Temporizador solo para rondas 1-4
 function startTimer(seconds) {
     stopTimer();
 
@@ -1372,11 +1363,10 @@ function playBombExplosion() {
     }
 }
 
-// Manejar timeout (solo modo fácil)
+// Manejar timeout (solo rondas 1-4 con timer)
 function handleTimeout() {
     TestState.isAnswering = true;
-    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty];
-    const currentRound = rounds[TestState.currentRound];
+    const currentRound = TEST_ROUNDS[TestState.currentRound];
     showFeedback(`⏰ Tiempo agotado. El campeón era: ${currentRound.champion}`, 'wrong');
     TestDOM.bgSilhouette.classList.add('revealed');
 
@@ -1391,8 +1381,7 @@ function handleSubmitAnswer() {
     if (TestState.isAnswering || TestState.isGameOver) return;
 
     const userAnswer = TestDOM.testAnswer.value.trim().toLowerCase();
-    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty];
-    const currentRound = rounds[TestState.currentRound];
+    const currentRound = TEST_ROUNDS[TestState.currentRound];
     const correctAnswer = currentRound.champion.toLowerCase();
 
     stopTimer();
@@ -1409,15 +1398,22 @@ function handleSubmitAnswer() {
             loadRound(TestState.currentRound);
         }, 2000);
     } else {
-        // Fallo
-        TestState.isAnswering = true;
-        showFeedback(`❌ Incorrecto. Era ${currentRound.champion}`, 'wrong');
-        TestDOM.bgSilhouette.classList.add('revealed');
+        // Fallo: mostrar segunda imagen si existe y no se mostró aún
+        if (currentRound.secondImage && !TestState.secondImageShown) {
+            TestState.secondImageShown = true;
+            TestDOM.bgSilhouette.src = currentRound.secondImage;
+            showFeedback(`❌ Incorrecto. Segunda oportunidad con pista visual.`, 'wrong');
+        } else {
+            // Segunda oportunidad fallida o sin segunda imagen
+            TestState.isAnswering = true;
+            showFeedback(`❌ Incorrecto. Era ${currentRound.champion}`, 'wrong');
+            TestDOM.bgSilhouette.classList.add('revealed');
 
-        setTimeout(() => {
-            TestState.currentRound++;
-            loadRound(TestState.currentRound);
-        }, 2500);
+            setTimeout(() => {
+                TestState.currentRound++;
+                loadRound(TestState.currentRound);
+            }, 2500);
+        }
     }
 }
 
@@ -1436,16 +1432,15 @@ function showTestResults() {
     TestState.isGameOver = true;
     stopTimer();
 
-    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty];
-    const percentage = Math.round((TestState.score / rounds.length) * 100);
+    const percentage = Math.round((TestState.score / TEST_ROUNDS.length) * 100);
     let resultMessage = '';
     let resultType = 'correct';
 
-    if (TestState.score === rounds.length) {
+    if (TestState.score === TEST_ROUNDS.length) {
         resultMessage = GameState.mode === 'warning'
             ? '🃏 ¡Caos absoluto! Dominas el trolleo.'
             : '🏆 ¡Invocador experto! Conoces a todos los campeones.';
-    } else if (TestState.score >= rounds.length / 2) {
+    } else if (TestState.score >= TEST_ROUNDS.length / 2) {
         resultMessage = GameState.mode === 'warning'
             ? '🃏 No está mal para ser un caos.'
             : '⚔️ Buen conocimiento, pero puedes mejorar.';
@@ -1458,19 +1453,18 @@ function showTestResults() {
     TestDOM.testScreen.innerHTML = `
         <div style="text-align: center; max-width: 400px;">
             <h2 style="color: var(--lol-gold-500); font-family: var(--font-display); text-transform: uppercase; margin-bottom: var(--space-lg);">RESULTADOS</h2>
-            <div style="font-size: 3rem; font-weight: 700; color: var(--lol-gold-500); margin-bottom: var(--space-md);">${TestState.score} / ${rounds.length}</div>
+            <div style="font-size: 3rem; font-weight: 700; color: var(--lol-gold-500); margin-bottom: var(--space-md);">${TestState.score} / ${TEST_ROUNDS.length}</div>
             <p style="color: var(--lol-blue-200); margin-bottom: var(--space-xl);">${resultMessage}</p>
             <button class="btn-submit" onclick="location.reload()" style="width: auto; padding: var(--space-md) var(--space-xl);">VOLVER AL MENÚ</button>
         </div>
     `;
 
-    console.log(`🏁 Prueba finalizada: ${TestState.score}/${rounds.length} (${percentage}%)`);
+    console.log(`🏁 Prueba finalizada: ${TestState.score}/${TEST_ROUNDS.length} (${percentage}%)`);
 }
 
 // Pista: mostrar una letra del campeón
 function showHint() {
-    const rounds = TEST_ROUNDS_BY_DIFFICULTY[TestState.difficulty];
-    const round = rounds[TestState.currentRound];
+    const round = TEST_ROUNDS[TestState.currentRound];
     if (!round.hint) return;
 
     const currentAnswer = TestDOM.testAnswer.value.trim();
@@ -1506,35 +1500,6 @@ function bindTestEvents() {
     });
 
     TestDOM.btnHint.addEventListener('click', showHint);
-}
-
-// Seleccionar dificultad y iniciar juego
-function selectDifficulty(difficulty) {
-    TestDOM.difficultySelector.style.display = 'none';
-    startMode(GameState.mode || 'serious', difficulty);
-}
-
-// Vincular eventos de dificultad
-function bindDifficultyEvents() {
-    if (TestDOM.btnDificultadFacil) {
-        TestDOM.btnDificultadFacil.addEventListener('click', () => selectDifficulty('facil'));
-    }
-    if (TestDOM.btnDificultadMedio) {
-        TestDOM.btnDificultadMedio.addEventListener('click', () => selectDifficulty('medio'));
-    }
-    if (TestDOM.btnDificultadDificil) {
-        TestDOM.btnDificultadDificil.addEventListener('click', () => selectDifficulty('dificil'));
-    }
-    if (TestDOM.btnDificultadImposible) {
-        TestDOM.btnDificultadImposible.addEventListener('click', () => selectDifficulty('imposible'));
-    }
-    if (TestDOM.btnVolverMenu) {
-        TestDOM.btnVolverMenu.addEventListener('click', () => {
-            TestDOM.difficultySelector.style.display = 'none';
-            DOM.btnJugar.style.display = '';
-            DOM.btnAdvertencia.style.display = '';
-        });
-    }
 }
 
 // Exportar para debugging
