@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Convertir a Siluetas Negras</title>
+    <title>Convertir a Siluetas Negras (Fondo Blanco)</title>
     <style>
         body { font-family: sans-serif; padding: 20px; max-width: 900px; margin: 0 auto; background: #1a1a2e; color: #eee; }
         h1 { color: #ffc400; }
@@ -10,7 +10,7 @@
         .dropzone:hover, .dropzone.dragover { background: rgba(255,196,0,0.1); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-top: 20px; }
         .item { background: #0d0d1a; border-radius: 8px; padding: 12px; text-align: center; }
-        .item img, .item canvas { max-width: 100%; height: auto; border-radius: 4px; background: #333; display: block; margin: 0 auto 8px; }
+        .item img, .item canvas { max-width: 100%; height: auto; border-radius: 4px; background: #fff; display: block; margin: 0 auto 8px; }
         .item label { display: block; font-size: 12px; margin-bottom: 8px; color: #aaa; }
         .btn { background: #ffc400; color: #000; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; margin: 4px; }
         .btn:hover { background: #ffd14d; }
@@ -24,7 +24,7 @@
 </head>
 <body>
     <h1>🎨 Conversor de Siluetas Negras</h1>
-    <p>Arrastra tus imágenes aquí → se convierten a silueta negra (PNG transparente) → click "Descargar" → guárdalas en la misma carpeta.</p>
+    <p>Arrastra tus imágenes aquí → se convierten a <strong>silueta negra sobre fondo blanco</strong> (PNG transparente) → click "Descargar".</p>
 
     <div class="dropzone" id="dropzone">
         <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
@@ -84,6 +84,14 @@
             });
         }
 
+        function getDistance(c1, c2) {
+            return Math.sqrt(
+                Math.pow(c1.r - c2.r, 2) +
+                Math.pow(c1.g - c2.g, 2) +
+                Math.pow(c1.b - c2.b, 2)
+            );
+        }
+
         function createSilhouette(img, name) {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -93,25 +101,69 @@
             // Dibujar original
             ctx.drawImage(img, 0, 0);
 
-            // Convertir a silueta: alpha > 0 → negro opaco, alpha = 0 → transparente
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const data = imageData.data;
-            for (let i = 0; i < data.length; i += 4) {
-                const alpha = data[i + 3];
-                if (alpha > 0) {
-                    data[i] = 0;     // R
-                    data[i + 1] = 0; // G
-                    data[i + 2] = 0; // B
-                    data[i + 3] = 255; // Alpha completo
+
+            // Detectar color de fondo por la esquina superior izquierda (promedio de 3x3 píxeles)
+            let bgR = 0, bgG = 0, bgB = 0, bgA = 0, count = 0;
+            for (let y = 0; y < Math.min(3, canvas.height); y++) {
+                for (let x = 0; x < Math.min(3, canvas.width); x++) {
+                    const i = (y * canvas.width + x) * 4;
+                    bgR += data[i];
+                    bgG += data[i + 1];
+                    bgB += data[i + 2];
+                    bgA += data[i + 3];
+                    count++;
                 }
             }
+            bgR = Math.round(bgR / count);
+            bgG = Math.round(bgG / count);
+            bgB = Math.round(bgB / count);
+            bgA = Math.round(bgA / count);
+
+            // Umbral: si un píxel es similar al fondo → blanco, si no → negro
+            const THRESHOLD = 60;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                const a = data[i + 3];
+
+                // Si es transparente, dejar transparente
+                if (a < 10) {
+                    data[i] = 0;
+                    data[i + 1] = 0;
+                    data[i + 2] = 0;
+                    data[i + 3] = 0;
+                    continue;
+                }
+
+                const dist = getDistance({ r, g, b }, { r: bgR, g: bgG, b: bgB });
+
+                if (dist < THRESHOLD) {
+                    // Es fondo → blanco
+                    data[i] = 255;
+                    data[i + 1] = 255;
+                    data[i + 2] = 255;
+                    data[i + 3] = 255;
+                } else {
+                    // Es campeón → negro
+                    data[i] = 0;
+                    data[i + 1] = 0;
+                    data[i + 2] = 0;
+                    data[i + 3] = 255;
+                }
+            }
+
             ctx.putImageData(imageData, 0, 0);
 
             const dataUrl = canvas.toDataURL('image/png');
 
-            // Mostrar en grid
+            // Mostrar en grid (con fondo blanco para ver el resultado real)
             const div = document.createElement('div');
             div.className = 'item';
+            div.style.background = '#fff';
             div.innerHTML = `
                 <label><span class="original-badge">Original</span> ${name} (${img.width}x${img.height})</label>
                 <img src="${dataUrl}" alt="Silueta de ${name}">
